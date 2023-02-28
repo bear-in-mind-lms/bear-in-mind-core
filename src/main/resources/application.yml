@@ -1,0 +1,34 @@
+application:
+  locale: en
+  security:
+    jwt:
+      signing-key: ${JWT_SIGNING_KEY}
+      cookie-name: token
+      authorization-header-prefix: "Bearer "
+      lifetime-minutes: 60
+    password:
+      bcrypt-encoder:
+        strength: 8
+
+spring:
+  application:
+    name: bear-in-mind-core
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyHbmImpl
+    properties:
+      hibernate:
+        generate_statistics: true
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.yml
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB

@@ -1,0 +1,369 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0000_INIT
+      author: collaborator
+      changes:
+        - createTable:
+            tableName: translations
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: translations_pkey
+              - column:
+                  name: identifier
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: locale
+                  type: varchar(4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: text
+                  type: varchar(10240)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            constraintName: translations_identifier_locale_key
+            tableName: translations
+            columnNames: identifier, locale
+            clustered: false
+        - createSequence:
+            sequenceName: translations_identifier_seq
+            dataType: int
+        - createTable:
+            tableName: courses
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: courses_pkey
+              - column:
+                  name: name_identifier
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description_identifier
+                  type: int
+                  constraints:
+                    nullable: true
+              - column:
+                  name: image
+                  type: varchar(100)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: start_date_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: true
+              - column:
+                  name: end_date_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: true
+              - column:
+                  name: creation_date_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: registration_closing_date_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: true
+        - createTable:
+            tableName: course_lessons
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: course_lessons_pkey
+              - column:
+                  name: course_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: course_lessons_course_id_fkey
+                    references: courses(id)
+              - column:
+                  name: topic_identifier
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description_identifier
+                  type: int
+                  constraints:
+                    nullable: true
+              - column:
+                  name: image
+                  type: varchar(100)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: ordinal
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_date_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: true
+        - createTable:
+            tableName: course_lesson_parts
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: course_lesson_parts_pkey
+              - column:
+                  name: course_lesson_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: course_lesson_parts_course_lesson_id_fkey
+                    references: course_lessons(id)
+              - column:
+                  name: text_identifier
+                  type: int
+                  constraints:
+                    nullable: true
+              - column:
+                  name: attachments
+                  type: varchar(256)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: ordinal
+                  type: int
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: user_credentials
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: user_credentials_pkey
+                  name: id
+                  type: bigint
+              - column:
+                  constraints:
+                    nullable: false
+                  name: username
+                  type: varchar(100)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: password
+                  type: varchar(100)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: role
+                  type: varchar(100)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: active
+                  type: boolean
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: users_pkey
+                  name: id
+                  type: bigint
+              - column:
+                  name: first_name
+                  type: varchar(100)
+              - column:
+                  name: middle_name
+                  type: varchar(100)
+              - column:
+                  name: last_name
+                  type: varchar(100)
+              - column:
+                  name: title
+                  type: varchar(100)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: email
+                  type: varchar(100)
+              - column:
+                  name: phone_number
+                  type: varchar(100)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: locale
+                  type: varchar(4)
+              - column:
+                  name: image
+                  type: varchar(100)
+              - column:
+                  name: registration_date_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  constraints:
+                    nullable: false
+                    foreignKeyName: user_user_credentials_fkey
+                    references: user_credentials(id)
+                  name: user_credentials_id
+                  type: bigint
+        - createTable:
+            tableName: user_groups
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: user_groups_pkey
+                  name: id
+                  type: bigint
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name_identifier
+                  type: int
+              - column:
+                  name: image
+                  type: varchar(100)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: creation_date_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: user_group_members
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: user_group_members_pkey
+              - column:
+                  name: group_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: user_group_member_group_id_fkey
+                    references: user_groups(id)
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: user_group_member_user_id_fkey
+                    references: users(id)
+              - column:
+                  name: role
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: registration_date_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: true
+        - addUniqueConstraint:
+            constraintName: user_group_members_group_id_user_id_key
+            tableName: user_group_members
+            columnNames: group_id, user_id
+            clustered: false
+        - createTable:
+            tableName: course_user_data
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: course_user_data_pkey
+              - column:
+                  name: course_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: course_user_data_course_id_fkey
+                    references: courses(id)
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: course_user_data_user_id_fkey
+                    references: users(id)
+              - column:
+                  name: role
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_access_date_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            constraintName: course_user_data_course_id_user_id_key
+            tableName: course_user_data
+            columnNames: course_id, user_id
+            clustered: false
+        - createTable:
+            tableName: course_user_groups
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: course_user_groups_pkey
+              - column:
+                  name: course_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: course_user_groups_course_id_fkey
+                    references: courses(id)
+              - column:
+                  name: group_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: course_user_groups_user_group_id_fkey
+                    references: user_groups(id)
+        - addUniqueConstraint:
+            constraintName: course_user_groups_course_id_group_id_key
+            tableName: course_user_groups
+            columnNames: course_id, group_id
+            clustered: false

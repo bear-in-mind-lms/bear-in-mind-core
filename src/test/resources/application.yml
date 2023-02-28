@@ -1,0 +1,25 @@
+application:
+  locale: en
+  security:
+    jwt:
+      signing-key: secretAndSecureJwtSigningKeyOfAtLeast256Bits
+      cookie-name: token
+      authorization-header-prefix: "Bearer "
+      lifetime-minutes: 60
+    password:
+      bcrypt-encoder:
+        strength: 8
+
+spring:
+  application:
+    name: bear-in-mind-core
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyHbmImpl
+    properties:
+      hibernate:
+        generate_statistics: true
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.yml
