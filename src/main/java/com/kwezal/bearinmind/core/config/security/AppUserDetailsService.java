@@ -1,9 +1,10 @@
 package com.kwezal.bearinmind.core.config.security;
 
-import com.kwezal.bearinmind.core.exceptions.ResourceNotFoundException;
 import com.kwezal.bearinmind.core.user.model.UserCredentials;
 import com.kwezal.bearinmind.core.user.model.UserCredentials_;
 import com.kwezal.bearinmind.core.user.repository.UserCredentialsRepository;
+import com.kwezal.bearinmind.exception.ResourceNotFoundException;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +29,7 @@ public class AppUserDetailsService implements UserDetailsService {
                     user.getRole().getAuthorityNames().stream().map(SimpleGrantedAuthority::new).toList()
                 )
             )
-            .orElseThrow(() -> new ResourceNotFoundException(UserCredentials.class, UserCredentials_.USERNAME, username));
+            .orElseThrow(() -> new ResourceNotFoundException(UserCredentials.class, Map.of(UserCredentials_.USERNAME, username))
+            );
     }
 }

@@ -3,14 +3,14 @@ package com.kwezal.bearinmind.core.filestorage.service;
 import static java.util.Objects.isNull;
 
 import com.kwezal.bearinmind.core.auth.service.LoggedInUserService;
-import com.kwezal.bearinmind.core.exceptions.InvalidRequestDataException;
 import com.kwezal.bearinmind.core.filestorage.ennumeration.FileAssetType;
+import com.kwezal.bearinmind.exception.InvalidRequestDataException;
 import com.kwezal.bearinmind.filestorage.api.FileStorageClientApi;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -55,9 +55,7 @@ public class FileStorageService {
         if (isNull(multipartFile.getOriginalFilename())) {
             throw new InvalidRequestDataException(
                 MultipartFile.class,
-                "filename",
-                Objects.toString(multipartFile.getOriginalFilename()),
-                List.of("filename")
+                Map.of("filename", Objects.toString(multipartFile.getOriginalFilename()))
             );
         }
         return (

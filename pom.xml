@@ -31,6 +31,7 @@
         <prettier-maven-plugin.version>0.18</prettier-maven-plugin.version>
         <prettier-java.version>2.0.0</prettier-java.version>
         <bear-in-mind-file-storage.version>0.0.1</bear-in-mind-file-storage.version>
+        <bear-in-mind-exceptions.version>0.0.1</bear-in-mind-exceptions.version>
     </properties>
 
     <dependencies>
@@ -143,6 +144,14 @@
             <version>${bear-in-mind-file-storage.version}</version>
         </dependency>
         <!-- FILE STORAGE -->
+
+        <!-- EXCEPTIONS -->
+        <dependency>
+            <groupId>com.kwezal.bearinmind</groupId>
+            <artifactId>bear-in-mind-exceptions</artifactId>
+            <version>${bear-in-mind-exceptions.version}</version>
+        </dependency>
+        <!-- EXCEPTIONS -->
 
     </dependencies>
 

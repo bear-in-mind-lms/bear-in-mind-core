@@ -1,11 +1,10 @@
 package com.kwezal.bearinmind.core.user.service;
 
-import com.kwezal.bearinmind.core.exceptions.InvalidRequestDataException;
 import com.kwezal.bearinmind.core.user.model.User;
 import com.kwezal.bearinmind.core.user.model.UserGroupMember;
 import com.kwezal.bearinmind.core.user.repository.UserGroupMemberRepository;
 import com.kwezal.bearinmind.core.user.repository.UserRepository;
-import java.util.List;
+import com.kwezal.bearinmind.exception.InvalidRequestDataException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,8 +29,7 @@ class UserValidationService {
             throw new InvalidRequestDataException(
                 UserGroupMember.class,
                 Map.of("groupId", groupId, "userId", userId),
-                errorCode,
-                List.of("groupId", "userId")
+                errorCode
             );
         }
     }
@@ -45,7 +43,7 @@ class UserValidationService {
      */
     void validateIfUserDoesNotExist(final String email, final String errorCode) {
         if (userRepository.existsByUserCredentialsUsernameOrEmailAndUserCredentialsActiveTrue(email, email)) {
-            throw new InvalidRequestDataException(User.class, "email", email, errorCode, List.of("email"));
+            throw new InvalidRequestDataException(User.class, Map.of("email", email), errorCode);
         }
     }
 }

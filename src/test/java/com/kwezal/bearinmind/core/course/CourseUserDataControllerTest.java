@@ -1,15 +1,15 @@
 package com.kwezal.bearinmind.core.course;
 
-import static com.kwezal.bearinmind.core.exceptions.ErrorCode.CANNOT_ENROLL;
-import static com.kwezal.bearinmind.core.exceptions.ErrorCode.FORBIDDEN;
+import static com.kwezal.bearinmind.core.exception.ErrorCode.CANNOT_ENROLL;
+import static com.kwezal.bearinmind.core.exception.ErrorCode.FORBIDDEN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.kwezal.bearinmind.core.ControllerTestInterface;
 import com.kwezal.bearinmind.core.course.enumeration.CourseRole;
 import com.kwezal.bearinmind.core.course.repository.CourseUserDataRepository;
-import com.kwezal.bearinmind.core.exceptions.ErrorResponse;
 import com.kwezal.bearinmind.core.utils.AuthHelper;
+import com.kwezal.bearinmind.exception.response.ErrorResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

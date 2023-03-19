@@ -4,7 +4,6 @@ import static com.kwezal.bearinmind.core.utils.RepositoryUtils.fetch;
 import static java.util.Objects.isNull;
 
 import com.kwezal.bearinmind.core.auth.service.LoggedInUserService;
-import com.kwezal.bearinmind.core.exceptions.ResourceNotFoundException;
 import com.kwezal.bearinmind.core.translation.service.TranslationService;
 import com.kwezal.bearinmind.core.user.dto.CreateOrUpdateUserGroupDto;
 import com.kwezal.bearinmind.core.user.dto.UserGroupDto;
@@ -14,6 +13,7 @@ import com.kwezal.bearinmind.core.user.model.UserGroup;
 import com.kwezal.bearinmind.core.user.model.UserGroup_;
 import com.kwezal.bearinmind.core.user.repository.UserGroupRepository;
 import com.kwezal.bearinmind.core.user.view.UserGroupListItemView;
+import com.kwezal.bearinmind.exception.ResourceNotFoundException;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +58,7 @@ public class UserGroupService {
 
         final var userGroup = userGroupRepository.findUserGroupWithMembersById(id);
         if (isNull(userGroup)) {
-            throw new ResourceNotFoundException(UserGroup.class, UserGroup_.ID, id);
+            throw new ResourceNotFoundException(UserGroup.class, Map.of(UserGroup_.ID, id));
         }
 
         final var translation = translationService.findTextByIdentifierAndLocale(userGroup.getNameIdentifier(), locale);

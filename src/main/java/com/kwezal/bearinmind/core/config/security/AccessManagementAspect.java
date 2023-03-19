@@ -1,11 +1,12 @@
 package com.kwezal.bearinmind.core.config.security;
 
 import com.kwezal.bearinmind.core.auth.service.LoggedInUserService;
-import com.kwezal.bearinmind.core.exceptions.AuthorizationException;
 import com.kwezal.bearinmind.core.user.model.UserCredentials;
 import com.kwezal.bearinmind.core.user.model.UserCredentials_;
+import com.kwezal.bearinmind.exception.AuthorizationException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -30,8 +31,7 @@ public class AccessManagementAspect {
         if (Arrays.stream(annotation.value()).noneMatch(loggedInUserService.getLoggedInUserRoles()::contains)) {
             throw new AuthorizationException(
                 UserCredentials.class,
-                UserCredentials_.ROLE,
-                loggedInUserService.getLoggedInUserRoles().toString()
+                Map.of(UserCredentials_.ROLE, loggedInUserService.getLoggedInUserRoles().toString())
             );
         }
     }

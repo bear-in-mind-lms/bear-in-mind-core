@@ -7,14 +7,14 @@ import com.kwezal.bearinmind.core.ControllerTestInterface;
 import com.kwezal.bearinmind.core.auth.dto.CredentialsDto;
 import com.kwezal.bearinmind.core.auth.dto.LoginResponseDto;
 import com.kwezal.bearinmind.core.auth.service.AuthJwtService;
-import com.kwezal.bearinmind.core.exceptions.ErrorCode;
-import com.kwezal.bearinmind.core.exceptions.ErrorResponse;
+import com.kwezal.bearinmind.core.exception.ErrorCode;
 import com.kwezal.bearinmind.core.user.dto.CreateUserDto;
 import com.kwezal.bearinmind.core.user.dto.UserDto;
 import com.kwezal.bearinmind.core.user.dto.UserRole;
+import com.kwezal.bearinmind.exception.response.ErrorResponse;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -166,7 +166,7 @@ class AuthControllerTest implements ControllerTestInterface {
         final var dto = new CreateUserDto(email, password);
 
         final var expectedErrorCode = ErrorCode.USER_EXISTS;
-        final var expectedArguments = List.of("email");
+        final var expectedArguments = Set.of("email");
 
         // WHEN
         final var response = webClient
@@ -198,10 +198,7 @@ class AuthControllerTest implements ControllerTestInterface {
 
     @ParameterizedTest
     @MethodSource("Should_ReturnBadRequest_When_AttemptToRegisterUserWithIncorrectData_Source")
-    void Should_ReturnBadRequest_When_AttemptToRegisterUserWithIncorrectData(
-        CreateUserDto dto,
-        List<String> expectedArguments
-    ) {
+    void Should_ReturnBadRequest_When_AttemptToRegisterUserWithIncorrectData(CreateUserDto dto, Set<String> expectedArguments) {
         // WHEN
         final var response = webClient
             .post()
@@ -223,8 +220,8 @@ class AuthControllerTest implements ControllerTestInterface {
 
     private static Stream<Arguments> Should_ReturnBadRequest_When_AttemptToRegisterUserWithIncorrectData_Source() {
         return Stream.of(
-            Arguments.of(new CreateUserDto("username", "password"), List.of("email")),
-            Arguments.of(new CreateUserDto("email@domain.com", ""), List.of("password"))
+            Arguments.of(new CreateUserDto("username", "password"), Set.of("email")),
+            Arguments.of(new CreateUserDto("email@domain.com", ""), Set.of("password"))
         );
     }
 }

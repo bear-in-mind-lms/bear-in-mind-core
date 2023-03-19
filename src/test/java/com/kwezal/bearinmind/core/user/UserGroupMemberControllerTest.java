@@ -1,14 +1,14 @@
 package com.kwezal.bearinmind.core.user;
 
-import static com.kwezal.bearinmind.core.exceptions.ErrorCode.CANNOT_JOIN_GROUP;
+import static com.kwezal.bearinmind.core.exception.ErrorCode.CANNOT_JOIN_GROUP;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.kwezal.bearinmind.core.ControllerTestInterface;
-import com.kwezal.bearinmind.core.exceptions.ErrorResponse;
 import com.kwezal.bearinmind.core.user.enumeration.UserGroupRole;
 import com.kwezal.bearinmind.core.user.repository.UserGroupMemberRepository;
 import com.kwezal.bearinmind.core.utils.AuthHelper;
+import com.kwezal.bearinmind.exception.response.ErrorResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

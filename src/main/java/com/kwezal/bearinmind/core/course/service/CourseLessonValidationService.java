@@ -8,8 +8,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import com.kwezal.bearinmind.core.course.dto.CreateCourseLessonDto;
 import com.kwezal.bearinmind.core.course.dto.CreateCourseLessonPartDto;
 import com.kwezal.bearinmind.core.course.dto.UpdateCourseLessonDto;
-import com.kwezal.bearinmind.core.exceptions.ErrorCode;
-import com.kwezal.bearinmind.core.exceptions.InvalidRequestDataException;
+import com.kwezal.bearinmind.core.exception.ErrorCode;
+import com.kwezal.bearinmind.exception.InvalidRequestDataException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -75,8 +75,7 @@ class CourseLessonValidationService {
                 "courseLesson",
                 invalidCourseLessons
             ),
-            ErrorCode.INVALID_COURSE_LESSON_START_DATE_TIME_OR_END_DATE_TIME,
-            List.of("courseStartDateTime", "courseEndDateTime", "courseLesson")
+            ErrorCode.INVALID_COURSE_LESSON_START_DATE_TIME_OR_END_DATE_TIME
         );
     }
 
@@ -106,8 +105,7 @@ class CourseLessonValidationService {
                 "courseLesson",
                 invalidCourseLesson
             ),
-            ErrorCode.INVALID_COURSE_LESSON_START_DATE_TIME_OR_END_DATE_TIME,
-            List.of("courseStartDateTime", "courseEndDateTime", "courseLesson")
+            ErrorCode.INVALID_COURSE_LESSON_START_DATE_TIME_OR_END_DATE_TIME
         );
     }
 
@@ -138,10 +136,8 @@ class CourseLessonValidationService {
                 if (isNull(part.attachments()) && isEmpty(part.text())) {
                     throw new InvalidRequestDataException(
                         CreateCourseLessonPartDto.class,
-                        "part",
-                        part,
-                        ErrorCode.INVALID_COURSE_LESSON_PART_ATTACHMENT_OR_TRANSLATIONS,
-                        List.of("part")
+                        Map.of("part", part),
+                        ErrorCode.INVALID_COURSE_LESSON_PART_ATTACHMENT_OR_TRANSLATIONS
                     );
                 }
             }
