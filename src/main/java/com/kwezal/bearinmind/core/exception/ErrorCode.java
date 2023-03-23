@@ -1,4 +1,4 @@
-package com.kwezal.bearinmind.core.exceptions;
+package com.kwezal.bearinmind.core.exception;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -6,12 +6,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ErrorCode {
 
-    // NOT FOUND
-    public static final String NOT_FOUND = "NOT_FOUND";
-
     // BAD REQUEST
-    public static final String REQUEST_ARGUMENT_INVALID = "REQUEST_ARGUMENT_INVALID";
-    public static final String CONNECTION_ERROR = "CONNECTION_ERROR";
+    public static final String REQUEST_ARGUMENT_INVALID =
+        com.kwezal.bearinmind.exception.response.ErrorCode.REQUEST_ARGUMENT_INVALID;
     public static final String CANNOT_ENROLL = "CANNOT_ENROLL";
     public static final String CANNOT_JOIN_GROUP = "CANNOT_JOIN_GROUP";
     public static final String FILE_SIZE_LIMIT_EXCEEDED = "FILE_SIZE_LIMIT_EXCEEDED";
@@ -39,10 +36,9 @@ public final class ErrorCode {
         "INVALID_COURSE_LESSON_PART_ATTACHMENT_OR_TRANSLATIONS";
 
     // AUTHORIZATION
-    public static final String AUTHORIZATION_ERROR = "AUTHORIZATION_ERROR";
     public static final String INCORRECT_CREDENTIALS = "INCORRECT_CREDENTIALS";
 
     // FORBIDDEN
-    public static final String FORBIDDEN = "FORBIDDEN";
+    public static final String FORBIDDEN = com.kwezal.bearinmind.exception.response.ErrorCode.FORBIDDEN;
     public static final String NO_ACCESS_TO_LESSON = "NO_ACCESS_TO_LESSON";
 }

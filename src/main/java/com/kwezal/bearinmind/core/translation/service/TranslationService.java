@@ -5,8 +5,6 @@ import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.kwezal.bearinmind.core.config.ApplicationConfig;
-import com.kwezal.bearinmind.core.exceptions.InvalidRequestDataException;
-import com.kwezal.bearinmind.core.exceptions.ResourceNotFoundException;
 import com.kwezal.bearinmind.core.translation.dto.TranslationDto;
 import com.kwezal.bearinmind.core.translation.dto.TranslationIdentifierAndLocaleDto;
 import com.kwezal.bearinmind.core.translation.dto.TranslationIdentifierAndTextDto;
@@ -17,6 +15,8 @@ import com.kwezal.bearinmind.core.translation.model.Translation_;
 import com.kwezal.bearinmind.core.translation.repository.TranslationRepository;
 import com.kwezal.bearinmind.core.utils.CollectionUtils;
 import com.kwezal.bearinmind.core.validation.annotation.Locale;
+import com.kwezal.bearinmind.exception.InvalidRequestDataException;
+import com.kwezal.bearinmind.exception.ResourceNotFoundException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -180,7 +180,7 @@ public class TranslationService {
 
         final var translations = translationRepository.findAllByIdentifier(identifier);
         if (translations.isEmpty()) {
-            throw new ResourceNotFoundException(Translation.class, Translation_.IDENTIFIER, identifier);
+            throw new ResourceNotFoundException(Translation.class, Map.of(Translation_.IDENTIFIER, identifier));
         }
 
         // Make a copy to avoid modifying the passed argument
@@ -299,7 +299,7 @@ public class TranslationService {
         // Prevent deletion of the translation in the default locale of the application
         final var applicationLocale = applicationConfig.getApplicationLocale();
         if (applicationLocale.equals(locale)) {
-            throw new InvalidRequestDataException(TranslationIdentifierAndLocaleDto.class, "locale", locale, List.of("locale"));
+            throw new InvalidRequestDataException(TranslationIdentifierAndLocaleDto.class, Map.of("locale", locale));
         }
 
         translationRepository.deleteByIdentifierAndLocale(identifier, locale);
@@ -318,7 +318,7 @@ public class TranslationService {
 
     private void requireExistsByIdentifier(final Integer identifier) {
         if (!translationRepository.existsByIdentifier(identifier)) {
-            throw new ResourceNotFoundException(Translation.class, Translation_.IDENTIFIER, identifier.toString());
+            throw new ResourceNotFoundException(Translation.class, Map.of(Translation_.IDENTIFIER, identifier.toString()));
         }
     }
 }

@@ -8,7 +8,7 @@ import com.kwezal.bearinmind.core.course.enumeration.CourseRole;
 import com.kwezal.bearinmind.core.course.repository.CourseRepository;
 import com.kwezal.bearinmind.core.course.repository.CourseUserDataRepository;
 import com.kwezal.bearinmind.core.course.view.UserCourseView;
-import com.kwezal.bearinmind.core.exceptions.ErrorCode;
+import com.kwezal.bearinmind.core.exception.ErrorCode;
 import com.kwezal.bearinmind.core.translation.service.TranslationService;
 import com.kwezal.bearinmind.core.user.dto.*;
 import com.kwezal.bearinmind.core.user.mapper.UserMapper;

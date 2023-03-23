@@ -9,12 +9,12 @@ import com.kwezal.bearinmind.core.course.dto.*;
 import com.kwezal.bearinmind.core.course.model.Course;
 import com.kwezal.bearinmind.core.course.model.CourseLesson;
 import com.kwezal.bearinmind.core.course.repository.CourseLessonRepository;
-import com.kwezal.bearinmind.core.exceptions.ErrorCode;
-import com.kwezal.bearinmind.core.exceptions.ErrorResponse;
+import com.kwezal.bearinmind.core.exception.ErrorCode;
 import com.kwezal.bearinmind.core.translation.model.Translation;
 import com.kwezal.bearinmind.core.translation.repository.TranslationRepository;
 import com.kwezal.bearinmind.core.utils.AuthHelper;
 import com.kwezal.bearinmind.core.utils.TestConstants;
+import com.kwezal.bearinmind.exception.response.ErrorResponse;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -187,7 +187,7 @@ class CourseLessonControllerTest implements ControllerTestInterface {
     void Should_ReturnBadRequest_When_AttemptToCreateCourseLessonWithIncorrectLessonDate(
         OffsetDateTime lessonStartDateTime,
         String expectedErrorCode,
-        List<String> expectedArguments
+        Set<String> expectedArguments
     ) {
         // GIVEN
         final var courseId = 11;
@@ -230,12 +230,12 @@ class CourseLessonControllerTest implements ControllerTestInterface {
             Arguments.of(
                 OffsetDateTime.of(2020, 1, 5, 9, 0, 0, 0, ZoneOffset.UTC),
                 ErrorCode.INVALID_COURSE_LESSON_START_DATE_TIME_OR_END_DATE_TIME,
-                List.of("courseStartDateTime", "courseEndDateTime", "courseLesson")
+                Set.of("courseStartDateTime", "courseEndDateTime", "courseLesson")
             ),
             Arguments.of(
                 OffsetDateTime.now().plusMonths(13),
                 ErrorCode.INVALID_COURSE_LESSON_START_DATE_TIME_OR_END_DATE_TIME,
-                List.of("courseStartDateTime", "courseEndDateTime", "courseLesson")
+                Set.of("courseStartDateTime", "courseEndDateTime", "courseLesson")
             )
         );
     }
@@ -245,7 +245,7 @@ class CourseLessonControllerTest implements ControllerTestInterface {
         // GIVEN
         final var courseId = 1;
 
-        final var expectedArguments = List.of("part");
+        final var expectedArguments = Set.of("part");
 
         final var lessonPartDto = new CreateCourseLessonPartDto(null, null);
 
@@ -391,7 +391,7 @@ class CourseLessonControllerTest implements ControllerTestInterface {
     void Should_ReturnBadRequest_When_AttemptToUpdateCourseLessonWithIncorrectDate(
         OffsetDateTime lessonStartDateTime,
         String expectedErrorCode,
-        List<String> expectedArguments
+        Set<String> expectedArguments
     ) {
         // GIVEN
         final var courseLessonId = 1L;
@@ -429,12 +429,12 @@ class CourseLessonControllerTest implements ControllerTestInterface {
             Arguments.of(
                 OffsetDateTime.of(2020, 1, 1, 8, 0, 0, 0, ZoneOffset.UTC),
                 ErrorCode.INVALID_COURSE_LESSON_START_DATE_TIME_OR_END_DATE_TIME,
-                List.of("courseStartDateTime", "courseEndDateTime", "courseLesson")
+                Set.of("courseStartDateTime", "courseEndDateTime", "courseLesson")
             ),
             Arguments.of(
                 OffsetDateTime.of(2021, 1, 1, 10, 0, 0, 0, ZoneOffset.UTC),
                 ErrorCode.INVALID_COURSE_LESSON_START_DATE_TIME_OR_END_DATE_TIME,
-                List.of("courseStartDateTime", "courseEndDateTime", "courseLesson")
+                Set.of("courseStartDateTime", "courseEndDateTime", "courseLesson")
             )
         );
     }

@@ -3,7 +3,7 @@ package com.kwezal.bearinmind.core.user.service;
 import static com.kwezal.bearinmind.core.utils.RepositoryUtils.fetch;
 
 import com.kwezal.bearinmind.core.auth.service.LoggedInUserService;
-import com.kwezal.bearinmind.core.exceptions.ErrorCode;
+import com.kwezal.bearinmind.core.exception.ErrorCode;
 import com.kwezal.bearinmind.core.user.enumeration.UserGroupRole;
 import com.kwezal.bearinmind.core.user.mapper.UserGroupMemberMapper;
 import com.kwezal.bearinmind.core.user.model.User;

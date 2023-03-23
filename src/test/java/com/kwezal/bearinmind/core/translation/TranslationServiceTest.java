@@ -3,14 +3,14 @@ package com.kwezal.bearinmind.core.translation;
 import static com.kwezal.bearinmind.core.utils.AssertionUtils.assertEqualsIgnoringOrder;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.kwezal.bearinmind.core.exceptions.InvalidRequestDataException;
-import com.kwezal.bearinmind.core.exceptions.ResourceNotFoundException;
 import com.kwezal.bearinmind.core.translation.dto.TranslationTextDto;
 import com.kwezal.bearinmind.core.translation.model.Translation;
 import com.kwezal.bearinmind.core.translation.repository.TranslationRepository;
 import com.kwezal.bearinmind.core.translation.service.TranslationService;
 import com.kwezal.bearinmind.core.utils.CollectionUtils;
 import com.kwezal.bearinmind.core.utils.TestConstants;
+import com.kwezal.bearinmind.exception.InvalidRequestDataException;
+import com.kwezal.bearinmind.exception.ResourceNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

@@ -1,18 +1,17 @@
 package com.kwezal.bearinmind.core.filestorage.service;
 
-import static com.kwezal.bearinmind.core.exceptions.ErrorCode.FILE_SIZE_LIMIT_EXCEEDED;
+import static com.kwezal.bearinmind.core.exception.ErrorCode.FILE_SIZE_LIMIT_EXCEEDED;
 
 import com.kwezal.bearinmind.core.course.enumeration.CourseRole;
 import com.kwezal.bearinmind.core.course.repository.CourseUserDataRepository;
-import com.kwezal.bearinmind.core.exceptions.ForbiddenException;
-import com.kwezal.bearinmind.core.exceptions.InvalidRequestDataException;
 import com.kwezal.bearinmind.core.filestorage.ennumeration.FileAssetType;
 import com.kwezal.bearinmind.core.user.enumeration.UserGroupRole;
 import com.kwezal.bearinmind.core.user.repository.UserGroupMemberRepository;
+import com.kwezal.bearinmind.exception.ForbiddenException;
+import com.kwezal.bearinmind.exception.InvalidRequestDataException;
 import com.kwezal.bearinmind.filestorage.model.ImageExtension;
 import com.kwezal.bearinmind.filestorage.model.ImageLimitSize;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -51,8 +50,7 @@ class FileValidationService {
             throw new InvalidRequestDataException(
                 MultipartFile.class,
                 Map.of("multipartFile", multipartFile, "fileAssetType", fileAssetType, "identifier", identifier),
-                FILE_SIZE_LIMIT_EXCEEDED,
-                List.of("multipartFile", "fileAssetType", "identifier")
+                FILE_SIZE_LIMIT_EXCEEDED
             );
         }
     }
@@ -70,7 +68,7 @@ class FileValidationService {
             .of(ImageExtension.values())
             .anyMatch(imageExtension -> imageExtension.getValue().equals(extension));
         if (!isAllowedExtension) {
-            throw new InvalidRequestDataException(MultipartFile.class, "imageExtension", extension, List.of("imageExtension"));
+            throw new InvalidRequestDataException(MultipartFile.class, Map.of("imageExtension", extension));
         }
     }
 
@@ -100,8 +98,7 @@ class FileValidationService {
         if (!condition) {
             throw new ForbiddenException(
                 MultipartFile.class,
-                Map.of("userId", userId, "fileAssetType", fileAssetType, "identifier", identifier),
-                List.of("userId", "fileAssetType", "identifier")
+                Map.of("userId", userId, "fileAssetType", fileAssetType, "identifier", identifier)
             );
         }
     }
@@ -110,7 +107,7 @@ class FileValidationService {
         try {
             return Long.parseLong(identifier);
         } catch (NumberFormatException e) {
-            throw new InvalidRequestDataException(String.class, "identifier", identifier);
+            throw new InvalidRequestDataException(String.class, Map.of("identifier", identifier));
         }
     }
 }

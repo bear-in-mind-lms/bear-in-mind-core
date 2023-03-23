@@ -11,12 +11,11 @@ import com.kwezal.bearinmind.core.course.model.CourseUserGroup;
 import com.kwezal.bearinmind.core.course.model.Course_;
 import com.kwezal.bearinmind.core.course.repository.CourseUserDataRepository;
 import com.kwezal.bearinmind.core.course.repository.CourseUserGroupRepository;
-import com.kwezal.bearinmind.core.exceptions.ErrorCode;
-import com.kwezal.bearinmind.core.exceptions.ForbiddenException;
-import com.kwezal.bearinmind.core.exceptions.InvalidRequestDataException;
+import com.kwezal.bearinmind.core.exception.ErrorCode;
+import com.kwezal.bearinmind.exception.ForbiddenException;
+import com.kwezal.bearinmind.exception.InvalidRequestDataException;
 import java.time.OffsetDateTime;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,11 +38,7 @@ class CourseValidationService {
      */
     void validateIfUserBelongsToCourseGroup(final Long courseId, final Long userId) {
         if (!courseUserGroupRepository.existsByCourseIdAndUserId(courseId, userId)) {
-            throw new ForbiddenException(
-                CourseUserGroup.class,
-                Map.of("courseId", courseId, "userId", userId),
-                List.of("courseId", "userId")
-            );
+            throw new ForbiddenException(CourseUserGroup.class, Map.of("courseId", courseId, "userId", userId));
         }
     }
 
@@ -62,7 +57,7 @@ class CourseValidationService {
         );
 
         if (!isInCourse) {
-            throw new ForbiddenException(Course.class, Course_.ID, userId.toString(), ErrorCode.NO_ACCESS_TO_LESSON);
+            throw new ForbiddenException(Course.class, Map.of(Course_.ID, userId.toString()), ErrorCode.NO_ACCESS_TO_LESSON);
         }
     }
 
@@ -78,8 +73,7 @@ class CourseValidationService {
             throw new InvalidRequestDataException(
                 CourseUserData.class,
                 Map.of("courseId", courseId, "userId", userId),
-                ErrorCode.CANNOT_ENROLL,
-                List.of("courseId", "userId")
+                ErrorCode.CANNOT_ENROLL
             );
         }
     }
@@ -136,8 +130,7 @@ class CourseValidationService {
             throw new InvalidRequestDataException(
                 CreateCourseDto.class,
                 Map.of("startDateTime", startDateTime, "endDateTime", endDateTime),
-                ErrorCode.INVALID_COURSE_START_DATE_TIME_IS_AFTER_END_DATE_TIME,
-                List.of("startDateTime", "endDateTime")
+                ErrorCode.INVALID_COURSE_START_DATE_TIME_IS_AFTER_END_DATE_TIME
             );
         }
     }
@@ -151,8 +144,7 @@ class CourseValidationService {
                 throw new InvalidRequestDataException(
                     CreateCourseDto.class,
                     Map.of("registrationClosingDateTime", registrationClosingDateTime, "endDateTime", endDateTime),
-                    ErrorCode.INVALID_COURSE_REGISTRATION_CLOSING_DATE_TIME_IS_AFTER_END_DATE_TIME,
-                    List.of("registrationClosingDateTime", "endDateTime")
+                    ErrorCode.INVALID_COURSE_REGISTRATION_CLOSING_DATE_TIME_IS_AFTER_END_DATE_TIME
                 );
             }
         }
@@ -163,10 +155,8 @@ class CourseValidationService {
             if (now.isAfter(endDateTime)) {
                 throw new InvalidRequestDataException(
                     CreateCourseDto.class,
-                    "endDateTime",
-                    endDateTime,
-                    ErrorCode.INVALID_COURSE_END_DATE_TIME_IS_BEFORE_NOW_TIME,
-                    List.of("endDateTime")
+                    Map.of("endDateTime", endDateTime),
+                    ErrorCode.INVALID_COURSE_END_DATE_TIME_IS_BEFORE_NOW_TIME
                 );
             }
         }
@@ -181,8 +171,7 @@ class CourseValidationService {
                 throw new InvalidRequestDataException(
                     CreateCourseDto.class,
                     Map.of("startDateTime", startDateTime, "registrationClosingDateTime", registrationClosingDateTime),
-                    ErrorCode.INVALID_COURSE_START_DATE_TIME_IS_AFTER_REGISTRATION_CLOSING_DATE_TIME,
-                    List.of("startDateTime", "registrationClosingDateTime")
+                    ErrorCode.INVALID_COURSE_START_DATE_TIME_IS_AFTER_REGISTRATION_CLOSING_DATE_TIME
                 );
             }
         }
@@ -196,10 +185,8 @@ class CourseValidationService {
             if (now.isAfter(registrationClosingDateTime)) {
                 throw new InvalidRequestDataException(
                     CreateCourseDto.class,
-                    "registrationClosingDateTime",
-                    registrationClosingDateTime,
-                    ErrorCode.INVALID_COURSE_REGISTRATION_CLOSING_DATE_TIME_IS_BEFORE_NOW_TIME,
-                    List.of("registrationClosingDateTime")
+                    Map.of("registrationClosingDateTime", registrationClosingDateTime),
+                    ErrorCode.INVALID_COURSE_REGISTRATION_CLOSING_DATE_TIME_IS_BEFORE_NOW_TIME
                 );
             }
         }

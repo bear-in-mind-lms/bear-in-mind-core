@@ -1,11 +1,10 @@
 package com.kwezal.bearinmind.core.translation.service;
 
-import static com.kwezal.bearinmind.core.exceptions.ErrorCode.*;
+import static com.kwezal.bearinmind.core.exception.ErrorCode.*;
 import static java.util.Objects.isNull;
 
-import com.kwezal.bearinmind.core.exceptions.InvalidRequestDataException;
 import com.kwezal.bearinmind.core.validation.annotation.Locale;
-import java.util.List;
+import com.kwezal.bearinmind.exception.InvalidRequestDataException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -28,8 +27,7 @@ class TranslationValidationService {
             throw new InvalidRequestDataException(
                 Map.class,
                 Map.of("localeMap", Objects.toString(localeMap), "locale", locale),
-                NO_APPLICATION_LOCALE_TRANSLATION,
-                List.of("localeMap", "locale")
+                NO_APPLICATION_LOCALE_TRANSLATION
             );
         }
     }
@@ -46,8 +44,7 @@ class TranslationValidationService {
             throw new InvalidRequestDataException(
                 Map.class,
                 Map.of("fieldTextMap", fieldTextMap, "requiredFields", requiredFields),
-                NO_REQUIRED_FIELD_IN_APPLICATION_LOCALE,
-                List.of("fieldTextMap", "requiredFields")
+                NO_REQUIRED_FIELD_IN_APPLICATION_LOCALE
             );
         }
     }
@@ -71,8 +68,7 @@ class TranslationValidationService {
             throw new InvalidRequestDataException(
                 Map.class,
                 Map.of("fieldTextMap", fieldTextMap, "requiredFields", requiredFields, "optionalFields", optionalFields),
-                INVALID_TRANSLATION_FIELD,
-                List.of("fieldTextMap", "requiredFields", "optionalFields")
+                INVALID_TRANSLATION_FIELD
             );
         }
     }
@@ -92,8 +88,7 @@ class TranslationValidationService {
             throw new InvalidRequestDataException(
                 Map.class,
                 Map.of("localeFieldTextsMap", localeFieldTextsMap, "fieldTextMap", fieldTextMap),
-                OPTIONAL_FIELD_DEFINED_BUT_NOT_PRESENT_IN_APPLICATION_LOCALE,
-                List.of("localeFieldTextsMap", "fieldTextMap")
+                OPTIONAL_FIELD_DEFINED_BUT_NOT_PRESENT_IN_APPLICATION_LOCALE
             );
         }
     }

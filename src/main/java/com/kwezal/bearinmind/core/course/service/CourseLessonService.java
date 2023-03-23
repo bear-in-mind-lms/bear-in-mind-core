@@ -19,9 +19,9 @@ import com.kwezal.bearinmind.core.course.repository.CourseLessonPartRepository;
 import com.kwezal.bearinmind.core.course.repository.CourseLessonRepository;
 import com.kwezal.bearinmind.core.course.repository.CourseRepository;
 import com.kwezal.bearinmind.core.course.repository.CourseUserDataRepository;
-import com.kwezal.bearinmind.core.exceptions.ErrorCode;
-import com.kwezal.bearinmind.core.exceptions.ForbiddenException;
+import com.kwezal.bearinmind.core.exception.ErrorCode;
 import com.kwezal.bearinmind.core.translation.service.TranslationService;
+import com.kwezal.bearinmind.exception.ForbiddenException;
 import java.time.OffsetDateTime;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
@@ -149,7 +149,11 @@ public class CourseLessonService {
         final var isInCourse = courseUserDataRepository.existsByCourseIdAndUserId(lesson.getCourse().getId(), userId);
 
         if (!isInCourse || (nonNull(lesson.getStartDateTime()) && OffsetDateTime.now().isBefore(lesson.getStartDateTime()))) {
-            throw new ForbiddenException(CourseLesson.class, CourseLesson_.ID, id.toString(), ErrorCode.NO_ACCESS_TO_LESSON);
+            throw new ForbiddenException(
+                CourseLesson.class,
+                Map.of(CourseLesson_.ID, id.toString()),
+                ErrorCode.NO_ACCESS_TO_LESSON
+            );
         }
 
         final var translations = getTranslations(locale, lesson);

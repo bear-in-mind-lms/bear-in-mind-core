@@ -1,10 +1,9 @@
 package com.kwezal.bearinmind.core.user.service;
 
-import com.kwezal.bearinmind.core.exceptions.ForbiddenException;
 import com.kwezal.bearinmind.core.user.dto.CreateOrUpdateUserGroupDto;
 import com.kwezal.bearinmind.core.user.enumeration.UserGroupRole;
 import com.kwezal.bearinmind.core.user.repository.UserGroupMemberRepository;
-import java.util.List;
+import com.kwezal.bearinmind.exception.ForbiddenException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,11 +23,7 @@ class UserGroupValidationService {
      */
     void validateIfUserHasWritePermissionToUserGroup(final Long groupId, final long userId) {
         if (!userGroupMemberRepository.existsByGroupIdAndUserIdAndRole(groupId, userId, UserGroupRole.OWNER)) {
-            throw new ForbiddenException(
-                CreateOrUpdateUserGroupDto.class,
-                Map.of("groupId", groupId, "userId", userId),
-                List.of("groupId", "userId")
-            );
+            throw new ForbiddenException(CreateOrUpdateUserGroupDto.class, Map.of("groupId", groupId, "userId", userId));
         }
     }
 }
