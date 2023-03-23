@@ -1,0 +1,27 @@
+# This workflow will build and test a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 18
+      uses: actions/setup-java@v3
+      with:
+        java-version: '18'
+        distribution: 'temurin'
+        cache: maven
+    - name: Build and Test
+      run: |
+        export TESTCONTAINERS_RYUK_DISABLED=true
+        mvn -B verify --file pom.xml -s settings.xml
