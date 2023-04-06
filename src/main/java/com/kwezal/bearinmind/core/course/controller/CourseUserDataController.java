@@ -1,5 +1,6 @@
 package com.kwezal.bearinmind.core.course.controller;
 
+import com.kwezal.bearinmind.core.course.enumeration.CourseRole;
 import com.kwezal.bearinmind.core.course.service.CourseUserDataService;
 import com.kwezal.bearinmind.core.logging.ControllerLogging;
 import javax.validation.constraints.Min;
@@ -26,5 +27,27 @@ public class CourseUserDataController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void enrollUserInCourse(@PathVariable @Min(1) Long courseId) {
         courseUserDataService.enrollUserInCourse(courseId);
+    }
+
+    /**
+     * Finds a role in a given course for the logged-in user.
+     *
+     * @param id course ID
+     * @return course role
+     */
+    @GetMapping("/{id}/role")
+    public CourseRole findCourseRoleByCourseId(@PathVariable @Min(1) Long id) {
+        return courseUserDataService.findCourseRoleByCourseId(id);
+    }
+
+    /**
+     * Finds a role in a course with a given lesson for the logged-in user.
+     *
+     * @param id course lesson ID
+     * @return course role
+     */
+    @GetMapping("/lesson/{id}/role")
+    public CourseRole findCourseRoleByLessonId(@PathVariable @Min(1) Long id) {
+        return courseUserDataService.findCourseRoleByLessonId(id);
     }
 }

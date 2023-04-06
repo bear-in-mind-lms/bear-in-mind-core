@@ -1,14 +1,19 @@
 package com.kwezal.bearinmind.core.course.service;
 
+import static com.kwezal.bearinmind.core.utils.RepositoryUtils.fetch;
+
 import com.kwezal.bearinmind.core.auth.service.LoggedInUserService;
 import com.kwezal.bearinmind.core.course.enumeration.CourseRole;
 import com.kwezal.bearinmind.core.course.mapper.CourseUserDataMapper;
 import com.kwezal.bearinmind.core.course.model.Course;
+import com.kwezal.bearinmind.core.course.model.CourseUserData;
+import com.kwezal.bearinmind.core.course.model.CourseUserData_;
 import com.kwezal.bearinmind.core.course.repository.CourseRepository;
 import com.kwezal.bearinmind.core.course.repository.CourseUserDataRepository;
 import com.kwezal.bearinmind.core.user.model.User;
 import com.kwezal.bearinmind.core.user.repository.UserRepository;
-import com.kwezal.bearinmind.core.utils.RepositoryUtils;
+import com.kwezal.bearinmind.exception.ResourceNotFoundException;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,10 +38,31 @@ public class CourseUserDataService {
         courseValidationService.validateIfUserBelongsToCourseGroup(courseId, userId);
         courseValidationService.validateIfUserIsNotEnrolledInCourse(courseId, userId);
 
-        final var user = RepositoryUtils.fetch(userId, userRepository, User.class);
-        final var course = RepositoryUtils.fetch(courseId, courseRepository, Course.class);
+        final var user = fetch(userId, userRepository, User.class);
+        final var course = fetch(courseId, courseRepository, Course.class);
 
         final var userData = courseUserDataMapper.map(course, user, CourseRole.STUDENT);
         courseUserDataRepository.save(userData);
+    }
+
+    public CourseRole findCourseRoleByCourseId(Long courseId) {
+        final var userId = loggedInUserService.getLoggedInUserId();
+        final var role = courseUserDataRepository.findCourseRoleByCourseIdAndUserId(courseId, userId);
+
+        return role.orElseThrow(() ->
+            new ResourceNotFoundException(
+                CourseUserData.class,
+                Map.of(CourseUserData_.COURSE, courseId, CourseUserData_.USER, userId)
+            )
+        );
+    }
+
+    public CourseRole findCourseRoleByLessonId(Long lessonId) {
+        final var userId = loggedInUserService.getLoggedInUserId();
+        final var role = courseUserDataRepository.findCourseRoleByCourseLessonIdAndUserId(lessonId, userId);
+
+        return role.orElseThrow(() ->
+            new ResourceNotFoundException(CourseUserData.class, Map.of("lesson", lessonId, CourseUserData_.USER, userId))
+        );
     }
 }

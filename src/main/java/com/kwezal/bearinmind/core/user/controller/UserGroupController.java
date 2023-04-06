@@ -42,7 +42,7 @@ public class UserGroupController {
      */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateUserGroup(@PathVariable Long id, @RequestBody @Validated CreateOrUpdateUserGroupDto dto) {
+    public void updateUserGroup(@PathVariable @Min(1) Long id, @RequestBody @Validated CreateOrUpdateUserGroupDto dto) {
         userGroupService.updateUserGroup(id, dto);
     }
 

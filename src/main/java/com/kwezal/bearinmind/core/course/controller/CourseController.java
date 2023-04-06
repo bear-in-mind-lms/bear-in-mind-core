@@ -43,7 +43,7 @@ public class CourseController {
     @RoleRequired(UserRole.TEACHER)
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateCourse(@PathVariable Long id, @RequestBody @Validated UpdateCourseDto dto) {
+    public void updateCourse(@PathVariable @Min(1) Long id, @RequestBody @Validated UpdateCourseDto dto) {
         courseService.updateCourse(id, dto);
     }
 

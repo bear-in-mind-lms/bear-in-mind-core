@@ -51,7 +51,7 @@ class CourseUserDataControllerTest implements ControllerTestInterface {
         response.expectStatus().isNoContent();
 
         // AND
-        final var courseRole = courseUserDataRepository.findCourseUserRoleByCourseIdAndUserId(courseId, userId);
+        final var courseRole = courseUserDataRepository.findCourseRoleByCourseIdAndUserId(courseId, userId);
 
         assertTrue(courseRole.isPresent());
         assertEquals(CourseRole.STUDENT, courseRole.get());
@@ -107,5 +107,71 @@ class CourseUserDataControllerTest implements ControllerTestInterface {
 
         // THEN
         response.expectStatus().isBadRequest();
+    }
+
+    @Test
+    void Should_ReturnCourseRole_When_UserHasRoleInCourse() {
+        // GIVEN
+        final var courseId = 2L;
+
+        final var expectedRole = CourseRole.TEACHER;
+
+        // WHEN
+        final var response = authHelper
+            .asStudent(webClient.get().uri(builder -> url(builder, "/{courseId}/role").build(courseId)))
+            .exchange();
+
+        // THEN
+        response.expectStatus().is2xxSuccessful();
+
+        // AND
+        response.expectBody(CourseRole.class).value(responseDto -> assertEquals(expectedRole, responseDto));
+    }
+
+    @Test
+    void Should_ReturnNotFound_When_UserDoesNotHaveRoleInCourse() {
+        // GIVEN
+        final var courseId = 5L;
+
+        // WHEN
+        final var response = authHelper
+            .asStudent(webClient.get().uri(builder -> url(builder, "/{courseId}/role").build(courseId)))
+            .exchange();
+
+        // THEN
+        response.expectStatus().isNotFound();
+    }
+
+    @Test
+    void Should_ReturnCourseRole_When_UserHasRoleInCourseWithGivenLesson() {
+        // GIVEN
+        final var lessonId = 101L;
+
+        final var expectedRole = CourseRole.TEACHER;
+
+        // WHEN
+        final var response = authHelper
+            .asStudent(webClient.get().uri(builder -> url(builder, "/lesson/{lessonId}/role").build(lessonId)))
+            .exchange();
+
+        // THEN
+        response.expectStatus().is2xxSuccessful();
+
+        // AND
+        response.expectBody(CourseRole.class).value(responseDto -> assertEquals(expectedRole, responseDto));
+    }
+
+    @Test
+    void Should_ReturnNotFound_When_UserDoesNotHaveRoleInCourseWithGivenLesson() {
+        // GIVEN
+        final var lessonId = 401L;
+
+        // WHEN
+        final var response = authHelper
+            .asStudent(webClient.get().uri(builder -> url(builder, "/lesson/{lessonId}/role").build(lessonId)))
+            .exchange();
+
+        // THEN
+        response.expectStatus().isNotFound();
     }
 }
