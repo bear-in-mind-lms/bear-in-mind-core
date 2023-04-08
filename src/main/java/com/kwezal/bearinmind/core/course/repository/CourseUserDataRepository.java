@@ -35,7 +35,23 @@ public interface CourseUserDataRepository extends JpaRepository<CourseUserData, 
                     FROM CourseUserData cud
                     WHERE cud.course.id = :courseId AND cud.user.id = :userId"""
     )
-    Optional<CourseRole> findCourseUserRoleByCourseIdAndUserId(Long courseId, Long userId);
+    Optional<CourseRole> findCourseRoleByCourseIdAndUserId(Long courseId, Long userId);
+
+    /**
+     * Finds the role that a given user has in a course with a given lesson.
+     *
+     * @param lessonId lesson ID
+     * @param userId   user ID
+     * @return course role
+     */
+    @Query(
+        """
+                    SELECT cud.role
+                    FROM CourseUserData cud
+                    JOIN CourseLesson cl ON (cl.course = cud.course)
+                    WHERE cl.id = :lessonId AND cud.user.id = :userId"""
+    )
+    Optional<CourseRole> findCourseRoleByCourseLessonIdAndUserId(Long lessonId, Long userId);
 
     /**
      * Finds a list of teachers in a given course.

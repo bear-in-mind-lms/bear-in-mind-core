@@ -30,7 +30,7 @@ public class CourseLessonController {
      */
     @RoleRequired(UserRole.TEACHER)
     @PostMapping("/{courseId}/lesson")
-    public Long createLesson(@PathVariable Long courseId, @RequestBody @Validated CreateCourseLessonDto dto) {
+    public Long createLesson(@PathVariable @Min(1) Long courseId, @RequestBody @Validated CreateCourseLessonDto dto) {
         return courseLessonService.createLesson(courseId, dto);
     }
 
@@ -43,7 +43,7 @@ public class CourseLessonController {
     @RoleRequired(UserRole.TEACHER)
     @PutMapping("/lesson/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateLesson(@PathVariable Long id, @RequestBody @Validated UpdateCourseLessonDto dto) {
+    public void updateLesson(@PathVariable @Min(1) Long id, @RequestBody @Validated UpdateCourseLessonDto dto) {
         courseLessonService.updateLesson(id, dto);
     }
 
