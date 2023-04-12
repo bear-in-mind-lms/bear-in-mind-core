@@ -8,6 +8,7 @@ import com.kwezal.bearinmind.core.course.dto.CreateCourseLessonDto;
 import com.kwezal.bearinmind.core.course.dto.UpdateCourseLessonDto;
 import com.kwezal.bearinmind.core.user.dto.UserRole;
 import java.util.Collections;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -39,7 +40,7 @@ public class CourseLessonControllerSecurityTest extends ControllerSecurityTest {
                 POST,
                 "/1/lesson",
                 UserRole.STUDENT_ROLE_GROUP,
-                new CreateCourseLessonDto(Collections.emptyMap(), null, null)
+                new CreateCourseLessonDto(Map.of("en", Collections.emptyMap()), null, null)
             ),
             Arguments.of(PUT, "/lesson/1", UserRole.STUDENT_ROLE_GROUP, new UpdateCourseLessonDto(Collections.emptyMap(), null))
         );

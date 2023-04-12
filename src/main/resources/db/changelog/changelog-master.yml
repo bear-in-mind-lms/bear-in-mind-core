@@ -1,3 +1,5 @@
 databaseChangeLog:
   - includeAll:
+      path: classpath*:com/kwezal/bearinmind/translation/db/changelog/changes
+  - includeAll:
       path: classpath*:db/changelog/changes

@@ -26,7 +26,7 @@ VALUES -- Administration
 ;
 
 INSERT INTO course_lessons(id, course_id, topic_identifier, description_identifier, ordinal, start_date_time)
-VALUES -- Administration
+VALUES -- Administration course
        --> Linux
        (1, 1, 1001, null, 1, null),
 

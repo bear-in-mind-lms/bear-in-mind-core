@@ -10,13 +10,14 @@ import com.kwezal.bearinmind.core.course.model.Course;
 import com.kwezal.bearinmind.core.course.model.CourseLesson;
 import com.kwezal.bearinmind.core.course.repository.CourseLessonRepository;
 import com.kwezal.bearinmind.core.exception.ErrorCode;
-import com.kwezal.bearinmind.core.translation.model.Translation;
-import com.kwezal.bearinmind.core.translation.repository.TranslationRepository;
 import com.kwezal.bearinmind.core.utils.AuthHelper;
 import com.kwezal.bearinmind.core.utils.TestConstants;
 import com.kwezal.bearinmind.exception.response.ErrorResponse;
+import com.kwezal.bearinmind.translation.model.Translation;
+import com.kwezal.bearinmind.translation.repository.TranslationRepository;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -152,7 +153,7 @@ class CourseLessonControllerTest implements ControllerTestInterface {
     @Test
     void Should_ReturnNotFound_When_AttemptToCreateCourseLessonForNonexistentCourse() {
         // GIVEN
-        final var dto = new CreateCourseLessonDto(null, null, null);
+        final var dto = new CreateCourseLessonDto(Map.of("en", Collections.emptyMap()), null, null);
 
         // WHEN
         final var response = authHelper

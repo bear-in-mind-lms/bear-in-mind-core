@@ -1,7 +1,7 @@
 # Bear in Mind | Core
 
 The Bear in Mind is a free open-source LMS (learning management system). This is the core microservice responsible for
-handling essentials, i.e. courses, users and translations.
+handling essentials, i.e. courses and users.
 
 ## Project Status
 
@@ -15,8 +15,8 @@ the [information for contributors][contributing].
 
 ## Code of Conduct
 
-This project is governed by the [Bear in Mind Code of Conduct][conduct]. By participating, you are expected to uphold this
-code of conduct.
+This project is governed by the [Bear in Mind Code of Conduct][conduct]. By participating, you are expected to uphold
+this code of conduct.
 
 ## License
 

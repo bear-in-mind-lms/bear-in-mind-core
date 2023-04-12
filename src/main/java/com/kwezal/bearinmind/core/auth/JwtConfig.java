@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 @Data
 public class JwtConfig {
 
-    public static final String CLAIM_AUTHORITIES = "auth";
-
     @Value("${application.security.jwt.signing-key}")
     String signingKey;
 

@@ -13,25 +13,28 @@
     <artifactId>bear-in-mind-core</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Bear in Mind Core</name>
-    <description>Core microservice responsible for handling essentials, i.e. courses, users and translations</description>
+    <description>Core microservice responsible for handling essentials, i.e. courses and users</description>
 
     <properties>
         <java.version>17</java.version>
-        <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <mapstruct.version>1.5.3.Final</mapstruct.version>
         <spring-security-oauth2.version>2.5.2.RELEASE</spring-security-oauth2.version>
         <spring-security-jwt.version>1.1.1.RELEASE</spring-security-jwt.version>
         <jjwt.version>0.11.5</jjwt.version>
         <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
         <spring-plugin-core.version>2.0.0.RELEASE</spring-plugin-core.version>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <lombok.version>1.18.20</lombok.version>
-        <testcontainers.postgresql.version>1.17.1</testcontainers.postgresql.version>
+        <testcontainers.postgresql.version>1.17.6</testcontainers.postgresql.version>
         <reactive-streams.version>1.0.3</reactive-streams.version>
         <hibernate-jpamodelgen.version>5.4.3.Final</hibernate-jpamodelgen.version>
-        <prettier-maven-plugin.version>0.18</prettier-maven-plugin.version>
-        <prettier-java.version>2.0.0</prettier-java.version>
+        <bear-in-mind-translations.version>0.0.1</bear-in-mind-translations.version>
         <bear-in-mind-file-storage.version>0.0.1</bear-in-mind-file-storage.version>
         <bear-in-mind-exceptions.version>0.0.1</bear-in-mind-exceptions.version>
+
+        <!-- Plugin Versions -->
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <prettier-maven-plugin.version>0.18</prettier-maven-plugin.version>
+        <prettier-java.version>2.0.0</prettier-java.version>
     </properties>
 
     <dependencies>
@@ -123,19 +126,13 @@
         </dependency>
         <!-- MAP-STRUCT -->
 
-        <!-- TEST -->
+        <!-- TRANSLATIONS -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <groupId>com.kwezal.bearinmind</groupId>
+            <artifactId>bear-in-mind-translations</artifactId>
+            <version>${bear-in-mind-translations.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${testcontainers.postgresql.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- TEST -->
+        <!-- TRANSLATIONS -->
 
         <!-- FILE STORAGE -->
         <dependency>
@@ -152,6 +149,20 @@
             <version>${bear-in-mind-exceptions.version}</version>
         </dependency>
         <!-- EXCEPTIONS -->
+
+        <!-- TEST -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.postgresql.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- TEST -->
 
     </dependencies>
 

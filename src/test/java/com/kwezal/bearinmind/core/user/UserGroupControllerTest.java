@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.kwezal.bearinmind.core.ControllerTestInterface;
 import com.kwezal.bearinmind.core.helper.Page;
-import com.kwezal.bearinmind.core.translation.model.Translation;
-import com.kwezal.bearinmind.core.translation.repository.TranslationRepository;
 import com.kwezal.bearinmind.core.user.dto.CreateOrUpdateUserGroupDto;
 import com.kwezal.bearinmind.core.user.dto.UserGroupDto;
 import com.kwezal.bearinmind.core.user.dto.UserGroupListItemDto;
@@ -21,7 +19,10 @@ import com.kwezal.bearinmind.core.user.model.UserGroupMember;
 import com.kwezal.bearinmind.core.user.repository.UserGroupMemberRepository;
 import com.kwezal.bearinmind.core.user.repository.UserGroupRepository;
 import com.kwezal.bearinmind.core.utils.AuthHelper;
+import com.kwezal.bearinmind.translation.model.Translation;
+import com.kwezal.bearinmind.translation.repository.TranslationRepository;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -144,7 +145,7 @@ class UserGroupControllerTest implements ControllerTestInterface {
     }
 
     private static Stream<Arguments> Should_ReturnBadRequest_When_AttemptToCreateUserGroupWithIncorrectData_Source() {
-        return Stream.of(Arguments.of(Map.of()), Arguments.of(Map.of("da", "Illuminati-ordenen")));
+        return Stream.of(Arguments.of(Collections.emptyMap()), Arguments.of(Map.of("da", "Illuminati-ordenen")));
     }
 
     @Test
@@ -201,7 +202,7 @@ class UserGroupControllerTest implements ControllerTestInterface {
     void Should_ReturnBadRequest_When_AttemptToUpdateUserGroupWithIncorrectData() {
         // GIVEN
         final var groupId = 1L;
-        final var dto = new CreateOrUpdateUserGroupDto(Map.of());
+        final var dto = new CreateOrUpdateUserGroupDto(Collections.emptyMap());
 
         // WHEN
         final var response = authHelper
