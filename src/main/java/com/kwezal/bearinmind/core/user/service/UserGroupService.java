@@ -4,7 +4,6 @@ import static com.kwezal.bearinmind.core.utils.RepositoryUtils.fetch;
 import static java.util.Objects.isNull;
 
 import com.kwezal.bearinmind.core.auth.service.LoggedInUserService;
-import com.kwezal.bearinmind.core.translation.service.TranslationService;
 import com.kwezal.bearinmind.core.user.dto.CreateOrUpdateUserGroupDto;
 import com.kwezal.bearinmind.core.user.dto.UserGroupDto;
 import com.kwezal.bearinmind.core.user.dto.UserGroupListItemDto;
@@ -14,6 +13,7 @@ import com.kwezal.bearinmind.core.user.model.UserGroup_;
 import com.kwezal.bearinmind.core.user.repository.UserGroupRepository;
 import com.kwezal.bearinmind.core.user.view.UserGroupListItemView;
 import com.kwezal.bearinmind.exception.ResourceNotFoundException;
+import com.kwezal.bearinmind.translation.service.TranslationService;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;

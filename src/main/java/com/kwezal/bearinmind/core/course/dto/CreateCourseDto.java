@@ -4,7 +4,7 @@ import com.kwezal.bearinmind.core.validation.annotation.Locale;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 
 /**
  * @param translations                mapping of locale to field texts; expected field keys are "name" and "description"
@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  * @param lessons                     course lessons data
  */
 public record CreateCourseDto(
-    @NotNull Map<@Locale String, Map<String, String>> translations,
+    @NotEmpty Map<@Locale String, Map<String, String>> translations,
 
     OffsetDateTime startDateTime,
 

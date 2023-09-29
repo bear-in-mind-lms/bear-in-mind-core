@@ -37,6 +37,16 @@
                     </snapshots>
                     <url>https://github.com/bear-in-mind-lms/bear-in-mind-exceptions/raw/mvn-artifact</url>
                 </repository>
+                <repository>
+                    <id>bear-in-mind-translations</id>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <url>https://github.com/bear-in-mind-lms/bear-in-mind-translations/raw/mvn-artifact</url>
+                </repository>
             </repositories>
         </profile>
     </profiles>
