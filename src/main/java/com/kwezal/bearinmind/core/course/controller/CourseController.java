@@ -59,6 +59,22 @@ public class CourseController {
     }
 
     /**
+     * Finds a page of conducted courses for the logged-in user.
+     * A conducted course is one that has not ended and that user has the owner or teacher role in.
+     *
+     * @param pageNumber page to be returned
+     * @param pageSize   number of items to be returned
+     * @return user page
+     */
+    @GetMapping("/list/conducted")
+    public Page<CourseListItemDto> findConductedCoursePage(
+        @RequestParam @Min(0) Integer pageNumber,
+        @RequestParam @Min(1) @Max(100) Integer pageSize
+    ) {
+        return courseService.findConductedCoursePage(pageNumber, pageSize);
+    }
+
+    /**
      * Finds a page of active courses for the logged-in user.
      * An active course is one that has not ended and that user is enrolled in.
      *
@@ -92,7 +108,7 @@ public class CourseController {
 
     /**
      * Finds a page of completed courses for the logged-in user.
-     * A completed course is one that has ended and that user was enrolled in.
+     * A completed course is one that has ended and that user was enrolled in or conducted it.
      *
      * @param pageNumber page to be returned
      * @param pageSize   number of items to be returned

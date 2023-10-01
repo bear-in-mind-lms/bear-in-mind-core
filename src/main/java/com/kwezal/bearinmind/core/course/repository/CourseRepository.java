@@ -13,6 +13,27 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
     /**
+     * Finds a page of conducted courses for a given user.
+     * A conducted course is one that has not ended and that user has the owner or teacher role in.
+     *
+     * @param userId   user ID
+     * @param pageable pagination information
+     * @return course page
+     */
+    @Query(
+        """
+                    SELECT c.id AS id, c.nameIdentifier AS nameIdentifier, c.image AS image
+                    FROM Course c
+                    JOIN CourseUserData cud ON (cud.course = c)
+                    WHERE cud.user.id = :userId AND
+                        (c.endDateTime IS NULL OR c.endDateTime > CURRENT_TIMESTAMP) AND
+                        cud.role IN (com.kwezal.bearinmind.core.course.enumeration.CourseRole.OWNER, com.kwezal.bearinmind.core.course.enumeration.CourseRole.TEACHER)
+                    GROUP BY c.id, cud.lastAccessDateTime
+                    ORDER BY cud.lastAccessDateTime DESC"""
+    )
+    Page<CourseListItemView> findAllConductedCourseListItemByUserId(Long userId, Pageable pageable);
+
+    /**
      * Finds a page of active courses for a given user.
      * An active course is one that has not ended and that user is enrolled in.
      *
@@ -25,7 +46,9 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
                     SELECT c.id AS id, c.nameIdentifier AS nameIdentifier, c.image AS image
                     FROM Course c
                     JOIN CourseUserData cud ON (cud.course = c)
-                    WHERE cud.user.id = :userId AND (c.endDateTime IS NULL OR c.endDateTime > CURRENT_TIMESTAMP)
+                    WHERE cud.user.id = :userId AND
+                        (c.endDateTime IS NULL OR c.endDateTime > CURRENT_TIMESTAMP) AND
+                        cud.role = com.kwezal.bearinmind.core.course.enumeration.CourseRole.STUDENT
                     GROUP BY c.id, cud.lastAccessDateTime
                     ORDER BY cud.lastAccessDateTime DESC"""
     )
@@ -56,7 +79,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     /**
      * Finds a page of completed courses for a given user.
-     * A completed course is one that has ended and that user was enrolled in.
+     * A completed course is one that has ended and that user was enrolled in or conducted it.
      *
      * @param userId   user ID
      * @param pageable pagination information

@@ -18,6 +18,8 @@ public record CourseViewDto(
 
     OffsetDateTime endDateTime,
 
+    ConductedCourseDto conducted,
+
     ActiveCourseDto active,
 
     AvailableCourseDto available,

@@ -20,6 +20,7 @@ import com.kwezal.bearinmind.core.user.repository.UserRepository;
 import com.kwezal.bearinmind.translation.service.TranslationService;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -101,6 +102,9 @@ public class CourseService {
         final var userId = authDetails.userId();
         final var locale = authDetails.locale();
 
+        final var conductedCourses = courseRepository
+            .findAllConductedCourseListItemByUserId(userId, Pageable.ofSize(listLength))
+            .toList();
         final var activeCourses = courseRepository
             .findAllActiveCourseListItemByUserId(userId, Pageable.ofSize(listLength))
             .toList();
@@ -117,58 +121,41 @@ public class CourseService {
             locale
         );
 
-        return courseMapper.mapToCourseMainViewDto(activeCourses, availableCourses, completedCourses, translations);
+        return courseMapper.mapToCourseMainViewDto(
+            conductedCourses,
+            activeCourses,
+            availableCourses,
+            completedCourses,
+            translations
+        );
+    }
+
+    public Page<CourseListItemDto> findConductedCoursePage(final Integer pageNumber, final Integer pageSize) {
+        return findCoursePage(pageNumber, pageSize, courseRepository::findAllConductedCourseListItemByUserId);
     }
 
     public Page<CourseListItemDto> findActiveCoursePage(final Integer pageNumber, final Integer pageSize) {
-        final var authDetails = loggedInUserService.getAuthenticationDetails();
-        final var userId = authDetails.userId();
-        final var locale = authDetails.locale();
-
-        final var coursePage = courseRepository.findAllActiveCourseListItemByUserId(
-            userId,
-            Pageable.ofSize(pageSize).withPage(pageNumber)
-        );
-        final var translations = translationService.findAllIdentifierAndTextByIdentifiersAndLocale(
-            coursePage.get(),
-            CourseListItemView::getNameIdentifier,
-            locale
-        );
-
-        return coursePage.map(course ->
-            courseMapper.mapToCourseListItemDto(course, translations.get(course.getNameIdentifier()))
-        );
+        return findCoursePage(pageNumber, pageSize, courseRepository::findAllActiveCourseListItemByUserId);
     }
 
     public Page<CourseListItemDto> findAvailableCoursePage(final Integer pageNumber, final Integer pageSize) {
-        final var authDetails = loggedInUserService.getAuthenticationDetails();
-        final var userId = authDetails.userId();
-        final var locale = authDetails.locale();
-
-        final var coursePage = courseRepository.findAllAvailableCourseListItemByUserId(
-            userId,
-            Pageable.ofSize(pageSize).withPage(pageNumber)
-        );
-        final var translations = translationService.findAllIdentifierAndTextByIdentifiersAndLocale(
-            coursePage.get(),
-            CourseListItemView::getNameIdentifier,
-            locale
-        );
-
-        return coursePage.map(course ->
-            courseMapper.mapToCourseListItemDto(course, translations.get(course.getNameIdentifier()))
-        );
+        return findCoursePage(pageNumber, pageSize, courseRepository::findAllAvailableCourseListItemByUserId);
     }
 
     public Page<CourseListItemDto> findCompletedCoursePage(final Integer pageNumber, final Integer pageSize) {
+        return findCoursePage(pageNumber, pageSize, courseRepository::findAllCompletedCourseListItemByUserId);
+    }
+
+    private Page<CourseListItemDto> findCoursePage(
+        final Integer pageNumber,
+        final Integer pageSize,
+        final BiFunction<Long, Pageable, Page<CourseListItemView>> findAllCourseListItemByUserId
+    ) {
         final var authDetails = loggedInUserService.getAuthenticationDetails();
         final var userId = authDetails.userId();
         final var locale = authDetails.locale();
 
-        final var coursePage = courseRepository.findAllCompletedCourseListItemByUserId(
-            userId,
-            Pageable.ofSize(pageSize).withPage(pageNumber)
-        );
+        final var coursePage = findAllCourseListItemByUserId.apply(userId, Pageable.ofSize(pageSize).withPage(pageNumber));
         final var translations = translationService.findAllIdentifierAndTextByIdentifiersAndLocale(
             coursePage.get(),
             CourseListItemView::getNameIdentifier,
@@ -183,7 +170,8 @@ public class CourseService {
     public CourseViewDto findCourseViewDtoBy(final Long id) {
         final var authDetails = loggedInUserService.getAuthenticationDetails();
         final var userId = authDetails.userId();
-        final var isInCourse = courseUserDataRepository.existsByCourseIdAndUserId(id, userId);
+        final var courseRole = courseUserDataRepository.findCourseRoleByCourseIdAndUserId(id, userId).orElse(null);
+        final var isInCourse = nonNull(courseRole);
 
         if (!isInCourse) {
             courseValidationService.validateIfUserBelongsToCourseGroup(id, userId);
@@ -210,23 +198,38 @@ public class CourseService {
             )
             .toList();
 
+        ConductedCourseDto conducted = null;
         ActiveCourseDto active = null;
         AvailableCourseDto available = null;
         CompletedCourseDto completed = null;
 
         final var endDateTime = course.getEndDateTime();
         final var now = OffsetDateTime.now();
-        if (isInCourse && (isNull(endDateTime) || now.compareTo(endDateTime) < 0)) {
-            active = new ActiveCourseDto();
-        }
-        if (!isInCourse && (isNull(endDateTime) || now.compareTo(endDateTime) < 0)) {
+        final var isCourseActive = isNull(endDateTime) || now.isBefore(endDateTime);
+        if (isInCourse) {
+            if (!isCourseActive) {
+                completed = new CompletedCourseDto();
+            } else if (courseRole.isTeacher()) {
+                conducted = new ConductedCourseDto();
+            } else {
+                active = new ActiveCourseDto();
+            }
+        } else if (isCourseActive) {
             available = new AvailableCourseDto(course.getRegistrationClosingDateTime());
         }
-        if (isInCourse && nonNull(endDateTime) && now.compareTo(endDateTime) >= 0) {
-            completed = new CompletedCourseDto();
-        }
 
-        return new CourseViewDto(name, description, image, teachers, lessons, endDateTime, active, available, completed);
+        return new CourseViewDto(
+            name,
+            description,
+            image,
+            teachers,
+            lessons,
+            endDateTime,
+            conducted,
+            active,
+            available,
+            completed
+        );
     }
 
     private Map<Integer, String> getTranslations(String locale, Course course) {

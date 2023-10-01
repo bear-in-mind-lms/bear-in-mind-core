@@ -12,4 +12,8 @@ public enum CourseRole {
     public static CourseRole fromNameOrNull(final String name) {
         return EnumUtils.fromNameOrNull(CourseRole.class, name);
     }
+
+    public boolean isTeacher() {
+        return this == OWNER || this == TEACHER;
+    }
 }

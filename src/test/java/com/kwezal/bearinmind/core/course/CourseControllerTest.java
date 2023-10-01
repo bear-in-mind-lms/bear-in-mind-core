@@ -2,6 +2,7 @@ package com.kwezal.bearinmind.core.course;
 
 import static com.kwezal.bearinmind.core.utils.AssertionUtils.assertEqualsIgnoringOrder;
 import static com.kwezal.bearinmind.core.utils.AssertionUtils.assertTimeDifferenceLessOrEqual;
+import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.kwezal.bearinmind.core.ControllerTestInterface;
@@ -318,7 +319,6 @@ class CourseControllerTest implements ControllerTestInterface {
         Set<String> expectedArguments
     ) {
         // GIVEN
-
         final var partLessonTranslations = Map.of(applicationLocale, "This is the content of a new lesson part");
         final var lessonPartDto = new CreateCourseLessonPartDto(
             partLessonTranslations,
@@ -523,17 +523,12 @@ class CourseControllerTest implements ControllerTestInterface {
     @ParameterizedTest
     @MethodSource("Should_ReturnCoursesMainView_When_CorrectRequest_Source")
     void Should_ReturnCoursesMainView_When_CorrectRequest(
-        int listLengthParam,
-        List<Long> expectedIdsOfActiveListParam,
-        List<Long> expectedIdsOfAvailableListParam,
-        List<Long> expectedIdsOfCompletedListParam
+        int listLength,
+        List<Long> expectedConductedCourseIds,
+        List<Long> expectedActiveCourseIds,
+        List<Long> expectedAvailableCourseIds,
+        List<Long> expectedCompletedCourseIds
     ) {
-        // GIVEN
-        final var listLength = listLengthParam;
-        final var expectedIdsOfActiveList = expectedIdsOfActiveListParam;
-        final var expectedIdsOfAvailableList = expectedIdsOfAvailableListParam;
-        final var expectedIdsOfCompletedList = expectedIdsOfCompletedListParam;
-
         // WHEN
         final var response = authHelper
             .asStudent(webClient.get().uri(builder -> url(builder, "/main-view").queryParam("listLength", listLength).build()))
@@ -546,13 +541,17 @@ class CourseControllerTest implements ControllerTestInterface {
         response
             .expectBody(CourseMainViewDto.class)
             .value(responseDto -> {
-                assertEquals(expectedIdsOfActiveList, responseDto.activeCourses().stream().map(CourseListItemDto::id).toList());
                 assertEquals(
-                    expectedIdsOfAvailableList,
+                    expectedConductedCourseIds,
+                    responseDto.conductedCourses().stream().map(CourseListItemDto::id).toList()
+                );
+                assertEquals(expectedActiveCourseIds, responseDto.activeCourses().stream().map(CourseListItemDto::id).toList());
+                assertEquals(
+                    expectedAvailableCourseIds,
                     responseDto.availableCourses().stream().map(CourseListItemDto::id).toList()
                 );
                 assertEquals(
-                    expectedIdsOfCompletedList,
+                    expectedCompletedCourseIds,
                     responseDto.completedCourses().stream().map(CourseListItemDto::id).toList()
                 );
             });
@@ -560,17 +559,14 @@ class CourseControllerTest implements ControllerTestInterface {
 
     private static Stream<Arguments> Should_ReturnCoursesMainView_When_CorrectRequest_Source() {
         return Stream.of(
-            Arguments.of(10, List.of(10L, 8L, 4L, 3L, 2L), List.of(11L), List.of(9L, 1L)),
-            Arguments.of(3, List.of(10L, 8L, 4L), List.of(11L), List.of(9L, 1L))
+            Arguments.of(10, List.of(4L, 3L, 2L), List.of(10L, 8L), List.of(11L), List.of(9L, 1L)),
+            Arguments.of(2, List.of(4L, 3L), List.of(10L, 8L), List.of(11L), List.of(9L, 1L))
         );
     }
 
     @ParameterizedTest
     @ValueSource(ints = { 0, 11 })
-    void Should_ReturnBadRequest_When_AttemptToGetMainViewCoursesWithIncorrectLength(int paramListLength) {
-        // GIVEN
-        final var listLength = paramListLength;
-
+    void Should_ReturnBadRequest_When_AttemptToGetMainViewCoursesWithIncorrectLength(int listLength) {
         // WHEN
         final var response = authHelper
             .asStudent(webClient.get().uri(builder -> url(builder, "/main-view").queryParam("listLength", listLength).build()))
@@ -580,12 +576,12 @@ class CourseControllerTest implements ControllerTestInterface {
         response.expectStatus().isBadRequest();
     }
 
-    @Test
-    void Should_ReturnActiveCourses_When_CorrectRequest() {
+    @ParameterizedTest
+    @MethodSource("Should_ReturnCourses_When_CorrectRequest_Source")
+    void Should_ReturnCourses_When_CorrectRequest(String endpoint, List<Long> expectedCourseIds) {
         // GIVEN
         final var pageNumber = 0;
         final var pageSize = 10;
-        final var expectedCourseIds = List.of(10L, 8L, 4L, 3L, 2L);
 
         // WHEN
         final var response = authHelper
@@ -593,10 +589,7 @@ class CourseControllerTest implements ControllerTestInterface {
                 webClient
                     .get()
                     .uri(builder ->
-                        url(builder, "/list/active")
-                            .queryParam("pageNumber", pageNumber)
-                            .queryParam("pageSize", pageSize)
-                            .build()
+                        url(builder, endpoint).queryParam("pageNumber", pageNumber).queryParam("pageSize", pageSize).build()
                     )
             )
             .exchange();
@@ -613,19 +606,25 @@ class CourseControllerTest implements ControllerTestInterface {
             });
     }
 
+    private static Stream<Arguments> Should_ReturnCourses_When_CorrectRequest_Source() {
+        return Stream.of(
+            Arguments.of("/list/conducted", List.of(4L, 3L, 2L)),
+            Arguments.of("/list/active", List.of(10L, 8L)),
+            Arguments.of("/list/available", List.of(11L)),
+            Arguments.of("/list/completed", List.of(9L, 1L))
+        );
+    }
+
     @ParameterizedTest
-    @MethodSource("Should_ReturnBadRequest_When_AttemptToGetActiveCoursesWithIncorrectData_Source")
-    void Should_ReturnBadRequest_When_AttemptToGetActiveCoursesWithIncorrectData(int pageNumber, int pageSize) {
+    @MethodSource("Should_ReturnBadRequest_When_AttemptToGetCoursesWithIncorrectData_Source")
+    void Should_ReturnBadRequest_When_AttemptToGetCoursesWithIncorrectData(String endpoint, int pageNumber, int pageSize) {
         // WHEN
         final var response = authHelper
             .asStudent(
                 webClient
                     .get()
                     .uri(builder ->
-                        url(builder, "/list/active")
-                            .queryParam("pageNumber", pageNumber)
-                            .queryParam("pageSize", pageSize)
-                            .build()
+                        url(builder, endpoint).queryParam("pageNumber", pageNumber).queryParam("pageSize", pageSize).build()
                     )
             )
             .exchange();
@@ -633,136 +632,36 @@ class CourseControllerTest implements ControllerTestInterface {
         response.expectStatus().isBadRequest();
     }
 
-    private static Stream<Arguments> Should_ReturnBadRequest_When_AttemptToGetActiveCoursesWithIncorrectData_Source() {
-        return Stream.of(Arguments.of(-1, 1), Arguments.of(1, 0), Arguments.of(1, 101));
-    }
-
-    @Test
-    void Should_ReturnAvailableCourses_When_CorrectRequest() {
-        // GIVEN
-        final var pageNumber = 0;
-        final var pageSize = 10;
-        final var expectedCourseIds = List.of(11L);
-
-        // WHEN
-        final var response = authHelper
-            .asStudent(
-                webClient
-                    .get()
-                    .uri(builder ->
-                        url(builder, "/list/available")
-                            .queryParam("pageNumber", pageNumber)
-                            .queryParam("pageSize", pageSize)
-                            .build()
-                    )
-            )
-            .exchange();
-
-        // THEN
-        response.expectStatus().is2xxSuccessful();
-
-        // AND
-        response
-            .expectBody(new ParameterizedTypeReference<Page<CourseListItemDto>>() {})
-            .value(responseDto -> {
-                assertEquals(pageNumber, responseDto.getNumber());
-                assertEqualsIgnoringOrder(
-                    expectedCourseIds,
-                    responseDto.getContent().stream().map(CourseListItemDto::id).toList()
-                );
-            });
+    private static Stream<Arguments> Should_ReturnBadRequest_When_AttemptToGetCoursesWithIncorrectData_Source() {
+        return Stream.of(
+            Arguments.of("/list/conducted", -1, 1),
+            Arguments.of("/list/conducted", 1, 0),
+            Arguments.of("/list/conducted", 1, 101),
+            Arguments.of("/list/active", -1, 1),
+            Arguments.of("/list/active", 1, 0),
+            Arguments.of("/list/active", 1, 101),
+            Arguments.of("/list/available", -1, 1),
+            Arguments.of("/list/available", 1, 0),
+            Arguments.of("/list/available", 1, 101),
+            Arguments.of("/list/completed", -1, 1),
+            Arguments.of("/list/completed", 1, 0),
+            Arguments.of("/list/completed", 1, 101)
+        );
     }
 
     @ParameterizedTest
-    @MethodSource("Should_ReturnBadRequest_When_AttemptToGetAvailableCoursesWithIncorrectData_Source")
-    void Should_ReturnBadRequest_When_AttemptToGetAvailableCoursesWithIncorrectData(int pageNumber, int pageSize) {
-        // WHEN
-        final var response = authHelper
-            .asStudent(
-                webClient
-                    .get()
-                    .uri(builder ->
-                        url(builder, "/list/active")
-                            .queryParam("pageNumber", pageNumber)
-                            .queryParam("pageSize", pageSize)
-                            .build()
-                    )
-            )
-            .exchange();
-        // THEN
-        response.expectStatus().isBadRequest();
-    }
-
-    private static Stream<Arguments> Should_ReturnBadRequest_When_AttemptToGetAvailableCoursesWithIncorrectData_Source() {
-        return Stream.of(Arguments.of(-2, 2), Arguments.of(2, -1), Arguments.of(2, 200));
-    }
-
-    @Test
-    void Should_ReturnCompletedCourses_When_CorrectRequest() {
-        // GIVEN
-        final var pageNumber = 0;
-        final var pageSize = 10;
-        final var expectedCourseIds = List.of(9L, 1L);
-
-        // WHEN
-        final var response = authHelper
-            .asStudent(
-                webClient
-                    .get()
-                    .uri(builder ->
-                        url(builder, "/list/completed")
-                            .queryParam("pageNumber", pageNumber)
-                            .queryParam("pageSize", pageSize)
-                            .build()
-                    )
-            )
-            .exchange();
-
-        // THEN
-        response.expectStatus().is2xxSuccessful();
-
-        // AND
-        response
-            .expectBody(new ParameterizedTypeReference<Page<CourseListItemDto>>() {})
-            .value(responseDto -> {
-                assertEquals(pageNumber, responseDto.getNumber());
-                assertEquals(expectedCourseIds, responseDto.getContent().stream().map(CourseListItemDto::id).toList());
-            });
-    }
-
-    @ParameterizedTest
-    @MethodSource("Should_ReturnBadRequest_When_AttemptToGetCompletedCoursesWithIncorrectData_Source")
-    void Should_ReturnBadRequest_When_AttemptToGetCompletedCoursesWithIncorrectData(int pageNumber, int pageSize) {
-        // WHEN
-        final var response = authHelper
-            .asStudent(
-                webClient
-                    .get()
-                    .uri(builder ->
-                        url(builder, "/list/active")
-                            .queryParam("pageNumber", pageNumber)
-                            .queryParam("pageSize", pageSize)
-                            .build()
-                    )
-            )
-            .exchange();
-        // THEN
-        response.expectStatus().isBadRequest();
-    }
-
-    private static Stream<Arguments> Should_ReturnBadRequest_When_AttemptToGetCompletedCoursesWithIncorrectData_Source() {
-        return Stream.of(Arguments.of(-3, 3), Arguments.of(3, -3), Arguments.of(3, 300));
-    }
-
-    @ParameterizedTest
-    @MethodSource("Should_ReturnActiveCoursePage_When_CorrectRequest_Source")
-    void Should_ReturnActiveCoursePage_When_CorrectRequest(
+    @MethodSource("Should_ReturnCoursePage_When_CorrectRequest_Source")
+    void Should_ReturnCoursePage_When_CorrectRequest(
         long courseId,
         String expectedName,
         String expectedDescription,
         List<Long> expectedLessonIds,
         List<Long> expectedTeacherIds,
-        OffsetDateTime expectedEndDateTime
+        OffsetDateTime expectedEndDateTime,
+        ConductedCourseDto expectedConducted,
+        ActiveCourseDto expectedActive,
+        OffsetDateTime expectedRegistrationClosingDateTime,
+        CompletedCourseDto expectedCompleted
     ) {
         // WHEN
         final var response = authHelper
@@ -787,121 +686,95 @@ class CourseControllerTest implements ControllerTestInterface {
                     responseDto.teachers().stream().map(UserListItemDto::id).toList()
                 );
                 assertTimeDifferenceLessOrEqual(expectedEndDateTime, responseDto.endDateTime());
-                assertNotNull(responseDto.active());
-                assertNull(responseDto.available());
-                assertNull(responseDto.completed());
+                assertEquals(expectedConducted, responseDto.conducted());
+                assertEquals(expectedActive, responseDto.active());
+                final var registrationClosingDateTime = nonNull(responseDto.available())
+                    ? responseDto.available().registrationClosingDateTime()
+                    : null;
+                assertTimeDifferenceLessOrEqual(expectedRegistrationClosingDateTime, registrationClosingDateTime);
+                assertEquals(expectedCompleted, responseDto.completed());
             });
     }
 
-    private static Stream<Arguments> Should_ReturnActiveCoursePage_When_CorrectRequest_Source() {
+    private static Stream<Arguments> Should_ReturnCoursePage_When_CorrectRequest_Source() {
         return Stream.of(
-            Arguments.of(2L, "Java", "Discover the finest Indonesian coffee", List.of(101L, 102L, 103L), List.of(1L, 2L), null),
+            Arguments.of(
+                1L,
+                "Administration",
+                null,
+                List.of(1L),
+                List.of(1L),
+                OffsetDateTime.of(2021, 1, 1, 9, 0, 0, 0, ZoneOffset.UTC),
+                null,
+                null,
+                null,
+                new CompletedCourseDto()
+            ),
+            Arguments.of(
+                2L,
+                "Java",
+                "Discover the finest Indonesian coffee",
+                List.of(101L, 102L, 103L),
+                List.of(1L, 2L),
+                null,
+                new ConductedCourseDto(),
+                null,
+                null,
+                null
+            ),
             Arguments.of(
                 8L,
                 "Docker",
                 "Put the container on the whale's back",
                 List.of(),
                 List.of(4L),
-                OffsetDateTime.now().plusDays(2013)
-            )
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("Should_ReturnAvailableCoursePage_When_CorrectRequest_Source")
-    void Should_ReturnAvailableCoursePage_When_CorrectRequest(
-        Long courseId,
-        String expectedName,
-        String expectedDescription,
-        List<Long> expectedTeacherIds,
-        List<Long> expectedLessonIds,
-        OffsetDateTime expectedEndDateTime,
-        OffsetDateTime expectedRegistrationClosingDateTime
-    ) {
-        // WHEN
-        final var response = authHelper
-            .asStudent(webClient.get().uri(builder -> url(builder, "/{courseId}").build(courseId)))
-            .exchange();
-
-        // THEN
-        response.expectStatus().is2xxSuccessful();
-
-        // AND
-        response
-            .expectBody(CourseViewDto.class)
-            .value(responseDto -> {
-                assertEquals(expectedName, responseDto.name());
-                assertEquals(expectedDescription, responseDto.description());
-                assertEqualsIgnoringOrder(
-                    expectedTeacherIds,
-                    responseDto.teachers().stream().map(UserListItemDto::id).toList()
-                );
-                assertEqualsIgnoringOrder(
-                    expectedLessonIds,
-                    responseDto.lessons().stream().map(CourseLessonCardDto::id).toList()
-                );
-                assertTimeDifferenceLessOrEqual(expectedEndDateTime, responseDto.endDateTime());
-                assertTimeDifferenceLessOrEqual(
-                    expectedRegistrationClosingDateTime,
-                    responseDto.available().registrationClosingDateTime()
-                );
-                assertNull(responseDto.active());
-                assertNotNull(responseDto.available());
-                assertNull(responseDto.completed());
-            });
-    }
-
-    private static Stream<Arguments> Should_ReturnAvailableCoursePage_When_CorrectRequest_Source() {
-        return Stream.of(
+                OffsetDateTime.now().plusDays(2013),
+                null,
+                new ActiveCourseDto(),
+                null,
+                null
+            ),
+            Arguments.of(
+                10L,
+                "Gamification in Education",
+                "Press any key to teach",
+                List.of(901L),
+                List.of(5L),
+                null,
+                null,
+                new ActiveCourseDto(),
+                null,
+                null
+            ),
             Arguments.of(
                 11L,
                 "Engelsk",
                 null,
-                List.of(5L),
                 List.of(),
+                List.of(5L),
                 OffsetDateTime.now().plusDays(365),
-                OffsetDateTime.now().plusDays(7)
+                null,
+                null,
+                OffsetDateTime.now().plusDays(7),
+                null
+            ),
+            Arguments.of(
+                9L,
+                "Kubernetes",
+                "/ˌk(j)uːbərˈnɛtɪs, -ˈneɪtɪs, -ˈneɪtiːz, -ˈnɛtiːz/",
+                List.of(),
+                List.of(4L),
+                OffsetDateTime.of(2021, 1, 4, 10, 0, 0, 0, ZoneOffset.UTC),
+                null,
+                null,
+                null,
+                new CompletedCourseDto()
             )
         );
     }
 
     @Test
-    void Should_ReturnCompletedCoursePage_When_CorrectRequest() {
-        // GIVEN
-        final var courseId = 9L;
-        final var expectedTeacherIds = List.of(4L);
-        final var expectedName = "Kubernetes";
-        final var expectedDescription = "/ˌk(j)uːbərˈnɛtɪs, -ˈneɪtɪs, -ˈneɪtiːz, -ˈnɛtiːz/";
-        final var expectedEndDateTime = OffsetDateTime.of(2021, 1, 4, 10, 0, 0, 0, ZoneOffset.UTC);
-
-        // WHEN
-        final var response = authHelper
-            .asStudent(webClient.get().uri(builder -> url(builder, "/{courseId}").build(courseId)))
-            .exchange();
-
-        // THEN
-        response.expectStatus().is2xxSuccessful();
-
-        // AND
-        response
-            .expectBody(CourseViewDto.class)
-            .value(responseDto -> {
-                assertEquals(expectedName, responseDto.name());
-                assertEquals(expectedDescription, responseDto.description());
-                assertTrue(responseDto.lessons().isEmpty());
-                assertEqualsIgnoringOrder(
-                    expectedTeacherIds,
-                    responseDto.teachers().stream().map(UserListItemDto::id).toList()
-                );
-                assertEquals(expectedEndDateTime, responseDto.endDateTime());
-                assertNull(responseDto.active());
-                assertNull(responseDto.available());
-                assertNotNull(responseDto.completed());
-            });
-    }
-
-    @Test
-    void Should_ReturnBadRequest_When_AttemptToGetCompletedCoursesWithIncorrectData() {
+    void Should_ReturnBadRequest_When_AttemptToGetCoursePageWithIncorrectData() {
         // GIVEN
         final var courseId = 0L;
 
