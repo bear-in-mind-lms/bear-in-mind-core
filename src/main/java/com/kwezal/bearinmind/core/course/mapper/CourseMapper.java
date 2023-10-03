@@ -32,12 +32,14 @@ public interface CourseMapper {
     }
 
     default CourseMainViewDto mapToCourseMainViewDto(
+        List<CourseListItemView> conductedCourses,
         List<CourseListItemView> activeCourses,
         List<CourseListItemView> availableCourses,
         List<CourseListItemView> completedCourses,
         Map<Integer, String> translations
     ) {
         return new CourseMainViewDto(
+            mapToCourseListItemDtos(conductedCourses, translations),
             mapToCourseListItemDtos(activeCourses, translations),
             mapToCourseListItemDtos(availableCourses, translations),
             mapToCourseListItemDtos(completedCourses, translations)

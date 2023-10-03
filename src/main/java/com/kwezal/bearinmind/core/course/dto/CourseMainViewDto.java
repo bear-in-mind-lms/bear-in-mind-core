@@ -4,6 +4,8 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 public record CourseMainViewDto(
+    @NotNull List<CourseListItemDto> conductedCourses,
+
     @NotNull List<CourseListItemDto> activeCourses,
 
     @NotNull List<CourseListItemDto> availableCourses,
