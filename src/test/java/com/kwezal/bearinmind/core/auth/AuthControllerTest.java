@@ -1,7 +1,9 @@
 package com.kwezal.bearinmind.core.auth;
 
 import static com.kwezal.bearinmind.core.utils.AssertionUtils.assertEqualsIgnoringOrder;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.kwezal.bearinmind.core.utils.TestConstants.ID_SEQUENCE_START;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.kwezal.bearinmind.core.ControllerTestInterface;
 import com.kwezal.bearinmind.core.auth.dto.CredentialsDto;
@@ -9,13 +11,10 @@ import com.kwezal.bearinmind.core.auth.dto.LoginResponseDto;
 import com.kwezal.bearinmind.core.auth.service.AuthJwtService;
 import com.kwezal.bearinmind.core.exception.ErrorCode;
 import com.kwezal.bearinmind.core.user.dto.CreateUserDto;
-import com.kwezal.bearinmind.core.user.dto.UserDto;
 import com.kwezal.bearinmind.core.user.dto.UserRole;
 import com.kwezal.bearinmind.exception.response.ErrorResponse;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,7 +22,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -51,26 +49,19 @@ class AuthControllerTest implements ControllerTestInterface {
     @Autowired
     private AuthJwtService authJwtService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Test
     void Should_ReturnAuthoritiesAndToken_When_SuccessfulLogin() {
         // GIVEN
         final var username = "mrmasterkey";
         final var password = "password";
         final var dto = new CredentialsDto(username, password);
-        final var expectedAuthorities = UserRole.ADMINISTRATOR_ROLE_GROUP
-            .getAuthorityNames()
-            .stream()
-            .sorted()
-            .collect(Collectors.toCollection(LinkedHashSet::new));
         final var expectedUserId = 1;
+        final var expectedAuthorities = UserRole.ADMINISTRATOR_ROLE_GROUP.getAuthorityNames();
 
         // WHEN
         final var response = webClient
             .post()
-            .uri(builder -> url(builder, "/login").build())
+            .uri(builder -> url(builder, "/log-in").build())
             .body(Mono.just(dto), CredentialsDto.class)
             .exchange();
 
@@ -81,12 +72,8 @@ class AuthControllerTest implements ControllerTestInterface {
         response
             .expectBody(LoginResponseDto.class)
             .value(responseDto -> {
-                final var responseAuthorities = responseDto
-                    .authorities()
-                    .stream()
-                    .sorted()
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-                assertEquals(expectedAuthorities, responseAuthorities);
+                assertEquals(expectedUserId, responseDto.userId());
+                assertEqualsIgnoringOrder(expectedAuthorities, responseDto.authorities());
             });
 
         // AND
@@ -103,26 +90,22 @@ class AuthControllerTest implements ControllerTestInterface {
                     assertEquals(username, claims.getSubject());
                     assertEquals(expectedUserId, claims.get(JwtClaimName.USER_ID));
 
-                    final var authorities =
-                        ((ArrayList<String>) claims.get(JwtClaimName.AUTHORITIES)).stream()
-                            .sorted()
-                            .collect(Collectors.toCollection(LinkedHashSet::new));
-                    assertEquals(expectedAuthorities, authorities);
+                    final var authorities = (Collection<String>) claims.get(JwtClaimName.AUTHORITIES);
+                    assertEqualsIgnoringOrder(expectedAuthorities, authorities);
                 }
             );
     }
 
-    @Test
-    void Should_ReturnUnauthorized_When_AttemptToLoginWithIncorrectCredentials() {
+    @ParameterizedTest
+    @MethodSource("Should_ReturnUnauthorized_When_AttemptToLogInWithIncorrectCredentials_Source")
+    void Should_ReturnUnauthorized_When_AttemptToLogInWithIncorrectCredentials(String username, String password) {
         // GIVEN
-        final var username = "mrmasterkeyWrong";
-        final var password = "passwordWrong";
         final var dto = new CredentialsDto(username, password);
 
         // WHEN
         final var response = webClient
             .post()
-            .uri(builder -> url(builder, "/login").build())
+            .uri(builder -> url(builder, "/log-in").build())
             .body(Mono.just(dto), CredentialsDto.class)
             .exchange();
 
@@ -130,12 +113,58 @@ class AuthControllerTest implements ControllerTestInterface {
         response.expectStatus().isUnauthorized();
     }
 
+    private static Stream<Arguments> Should_ReturnUnauthorized_When_AttemptToLogInWithIncorrectCredentials_Source() {
+        return Stream.of(Arguments.of("mrmasterkey", "invalidPassword"), Arguments.of("nonExistentUser", "password"));
+    }
+
+    @Test
+    void Should_ReturnBadRequest_When_AttemptToLogInWithoutBody() {
+        // WHEN
+        final var response = webClient.post().uri(builder -> url(builder, "/log-in").build()).exchange();
+
+        // THEN
+        response.expectStatus().isBadRequest();
+    }
+
+    @ParameterizedTest
+    @MethodSource("Should_ReturnBadRequest_When_AttemptToLogInWithIncorrectData_Source")
+    void Should_ReturnBadRequest_When_AttemptToLogInWithIncorrectData(CredentialsDto dto, Set<String> expectedArguments) {
+        // WHEN
+        final var response = webClient
+            .post()
+            .uri(builder -> url(builder, "/log-in").build())
+            .body(Mono.just(dto), CredentialsDto.class)
+            .exchange();
+
+        // THEN
+        response.expectStatus().isBadRequest();
+
+        // AND
+        response
+            .expectBody(ErrorResponse.class)
+            .value(responseDto -> {
+                assertEquals(ErrorCode.REQUEST_ARGUMENT_INVALID, responseDto.code());
+                assertEqualsIgnoringOrder(expectedArguments, responseDto.arguments());
+            });
+    }
+
+    private static Stream<Arguments> Should_ReturnBadRequest_When_AttemptToLogInWithIncorrectData_Source() {
+        return Stream.of(
+            Arguments.of(new CredentialsDto(" ", "password"), Set.of("username")),
+            Arguments.of(new CredentialsDto("mrmasterkey", " "), Set.of("password"))
+        );
+    }
+
     @Test
     void Should_RegisterUser_When_CorrectRequest() {
         // GIVEN
-        final var email = "email@domain.com";
+        final var email = "j.doe@bearinmind.kwezal.com";
         final var password = "password";
-        final var dto = new CreateUserDto(email, password);
+        final var firstName = "John";
+        final var lastName = "Doe";
+        final var dto = new CreateUserDto(email, password, firstName, lastName, null);
+        final var expectedUserId = ID_SEQUENCE_START;
+        final var expectedAuthorities = UserRole.STUDENT.getAuthorityNames();
 
         // WHEN
         final var response = webClient
@@ -149,13 +178,30 @@ class AuthControllerTest implements ControllerTestInterface {
 
         // AND
         response
-            .expectBody(UserDto.class)
+            .expectBody(LoginResponseDto.class)
             .value(responseDto -> {
-                assertNotNull(responseDto.getId());
-                assertEquals(email, responseDto.getEmail());
-                assertEquals(email, responseDto.getUsername());
-                assertTrue(passwordEncoder.matches(password, responseDto.getPassword()));
+                assertEquals(expectedUserId, responseDto.userId());
+                assertEquals(expectedAuthorities, responseDto.authorities());
             });
+
+        // AND
+        response
+            .expectHeader()
+            .value(
+                "Authorization",
+                header -> {
+                    assertTrue(header.startsWith(jwtConfig.getAuthorizationHeaderPrefix()));
+
+                    final var token = header.substring(jwtConfig.getAuthorizationHeaderPrefix().length());
+                    final var claims = authJwtService.parseClaims(token);
+
+                    assertEquals(email, claims.getSubject());
+                    assertEquals(expectedUserId, ((Integer) claims.get(JwtClaimName.USER_ID)).longValue());
+
+                    final var authorities = (Collection<String>) claims.get(JwtClaimName.AUTHORITIES);
+                    assertEqualsIgnoringOrder(expectedAuthorities, authorities);
+                }
+            );
     }
 
     @Test
@@ -163,7 +209,9 @@ class AuthControllerTest implements ControllerTestInterface {
         // GIVEN
         final var email = "mrmasterkey@bearinmind.kwezal.com";
         final var password = "password";
-        final var dto = new CreateUserDto(email, password);
+        final var firstName = "Keith";
+        final var lastName = "Master";
+        final var dto = new CreateUserDto(email, password, firstName, lastName, null);
 
         final var expectedErrorCode = ErrorCode.USER_EXISTS;
         final var expectedArguments = Set.of("email");
@@ -172,7 +220,7 @@ class AuthControllerTest implements ControllerTestInterface {
         final var response = webClient
             .post()
             .uri(builder -> url(builder, "/sign-up").build())
-            .body(Mono.just(dto), UserDto.class)
+            .body(Mono.just(dto), CreateUserDto.class)
             .exchange();
 
         // THEN
@@ -203,7 +251,7 @@ class AuthControllerTest implements ControllerTestInterface {
         final var response = webClient
             .post()
             .uri(builder -> url(builder, "/sign-up").build())
-            .body(Mono.just(dto), UserDto.class)
+            .body(Mono.just(dto), CreateUserDto.class)
             .exchange();
 
         // THEN
@@ -220,8 +268,10 @@ class AuthControllerTest implements ControllerTestInterface {
 
     private static Stream<Arguments> Should_ReturnBadRequest_When_AttemptToRegisterUserWithIncorrectData_Source() {
         return Stream.of(
-            Arguments.of(new CreateUserDto("username", "password"), Set.of("email")),
-            Arguments.of(new CreateUserDto("email@domain.com", ""), Set.of("password"))
+            Arguments.of(new CreateUserDto("invalidEmail", "password", "John", "Doe", null), Set.of("email")),
+            Arguments.of(new CreateUserDto("j.doe@bearinmind.kwezal.com", " ", "John", "Doe", null), Set.of("password")),
+            Arguments.of(new CreateUserDto("j.doe@bearinmind.kwezal.com", "password", " ", "Doe", null), Set.of("firstName")),
+            Arguments.of(new CreateUserDto("j.doe@bearinmind.kwezal.com", "password", "John", " ", null), Set.of("lastName"))
         );
     }
 }

@@ -116,7 +116,9 @@ public class CourseService {
             .toList();
 
         final var translations = translationService.findAllIdentifierAndTextByIdentifiersAndLocale(
-            Stream.of(activeCourses.stream(), availableCourses.stream(), completedCourses.stream()).flatMap(s -> s),
+            Stream
+                .of(conductedCourses.stream(), activeCourses.stream(), availableCourses.stream(), completedCourses.stream())
+                .flatMap(s -> s),
             CourseListItemView::getNameIdentifier,
             locale
         );

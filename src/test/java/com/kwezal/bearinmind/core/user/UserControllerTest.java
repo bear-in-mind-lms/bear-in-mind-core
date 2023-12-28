@@ -6,13 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.kwezal.bearinmind.core.ControllerTestInterface;
 import com.kwezal.bearinmind.core.course.enumeration.CourseRole;
-import com.kwezal.bearinmind.core.helper.Page;
 import com.kwezal.bearinmind.core.user.dto.*;
 import com.kwezal.bearinmind.core.user.model.User;
 import com.kwezal.bearinmind.core.user.model.UserCredentials;
 import com.kwezal.bearinmind.core.user.repository.UserCredentialsRepository;
 import com.kwezal.bearinmind.core.user.repository.UserRepository;
 import com.kwezal.bearinmind.core.utils.AuthHelper;
+import com.kwezal.bearinmind.core.utils.Page;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
