@@ -21,23 +21,15 @@ databaseChangeLog:
               - column:
                   name: description_identifier
                   type: int
-                  constraints:
-                    nullable: true
               - column:
                   name: image
                   type: varchar(100)
-                  constraints:
-                    nullable: true
               - column:
                   name: start_date_time
                   type: timestamp with time zone
-                  constraints:
-                    nullable: true
               - column:
                   name: end_date_time
                   type: timestamp with time zone
-                  constraints:
-                    nullable: true
               - column:
                   name: creation_date_time
                   type: timestamp with time zone
@@ -46,8 +38,6 @@ databaseChangeLog:
               - column:
                   name: registration_closing_date_time
                   type: timestamp with time zone
-                  constraints:
-                    nullable: true
         - createTable:
             tableName: course_lessons
             columns:
@@ -73,13 +63,9 @@ databaseChangeLog:
               - column:
                   name: description_identifier
                   type: int
-                  constraints:
-                    nullable: true
               - column:
                   name: image
                   type: varchar(100)
-                  constraints:
-                    nullable: true
               - column:
                   name: ordinal
                   type: int
@@ -88,8 +74,6 @@ databaseChangeLog:
               - column:
                   name: start_date_time
                   type: timestamp with time zone
-                  constraints:
-                    nullable: true
         - createTable:
             tableName: course_lesson_parts
             columns:
@@ -110,13 +94,9 @@ databaseChangeLog:
               - column:
                   name: text_identifier
                   type: int
-                  constraints:
-                    nullable: true
               - column:
                   name: attachments
                   type: varchar(256)
-                  constraints:
-                    nullable: true
               - column:
                   name: ordinal
                   type: int
@@ -126,67 +106,71 @@ databaseChangeLog:
             tableName: user_credentials
             columns:
               - column:
+                  name: id
+                  type: bigint
                   autoIncrement: true
                   constraints:
                     primaryKey: true
                     primaryKeyName: user_credentials_pkey
-                  name: id
-                  type: bigint
               - column:
-                  constraints:
-                    nullable: false
                   name: username
                   type: varchar(100)
-              - column:
                   constraints:
                     nullable: false
+              - column:
                   name: password
                   type: varchar(100)
-              - column:
                   constraints:
                     nullable: false
+              - column:
                   name: role
                   type: varchar(100)
-              - column:
                   constraints:
                     nullable: false
+              - column:
                   name: active
                   type: boolean
+                  constraints:
+                    nullable: false
         - createTable:
             tableName: users
             columns:
               - column:
+                  name: id
+                  type: bigint
                   autoIncrement: true
                   constraints:
                     primaryKey: true
                     primaryKeyName: users_pkey
-                  name: id
-                  type: bigint
               - column:
                   name: first_name
                   type: varchar(100)
+                  constraints:
+                    nullable: false
               - column:
                   name: middle_name
                   type: varchar(100)
               - column:
                   name: last_name
                   type: varchar(100)
+                  constraints:
+                    nullable: false
               - column:
                   name: title
                   type: varchar(100)
               - column:
-                  constraints:
-                    nullable: false
                   name: email
                   type: varchar(100)
+                  constraints:
+                    nullable: false
               - column:
                   name: phone_number
                   type: varchar(100)
               - column:
-                  constraints:
-                    nullable: false
                   name: locale
                   type: varchar(4)
+                  constraints:
+                    nullable: false
               - column:
                   name: image
                   type: varchar(100)
@@ -196,32 +180,30 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: user_credentials_id
+                  type: bigint
                   constraints:
                     nullable: false
                     foreignKeyName: user_user_credentials_fkey
                     references: user_credentials(id)
-                  name: user_credentials_id
-                  type: bigint
         - createTable:
             tableName: user_groups
             columns:
               - column:
+                  name: id
+                  type: bigint
                   autoIncrement: true
                   constraints:
                     primaryKey: true
                     primaryKeyName: user_groups_pkey
-                  name: id
-                  type: bigint
               - column:
-                  constraints:
-                    nullable: false
                   name: name_identifier
                   type: int
+                  constraints:
+                    nullable: false
               - column:
                   name: image
                   type: varchar(100)
-                  constraints:
-                    nullable: true
               - column:
                   name: creation_date_time
                   type: timestamp with time zone
@@ -259,8 +241,6 @@ databaseChangeLog:
               - column:
                   name: registration_date_time
                   type: timestamp with time zone
-                  constraints:
-                    nullable: true
         - addUniqueConstraint:
             constraintName: user_group_members_group_id_user_id_key
             tableName: user_group_members
