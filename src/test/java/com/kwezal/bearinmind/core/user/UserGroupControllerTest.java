@@ -7,7 +7,6 @@ import static com.kwezal.bearinmind.core.utils.TestConstants.NONEXISTENT_ID;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.kwezal.bearinmind.core.ControllerTestInterface;
-import com.kwezal.bearinmind.core.helper.Page;
 import com.kwezal.bearinmind.core.user.dto.CreateOrUpdateUserGroupDto;
 import com.kwezal.bearinmind.core.user.dto.UserGroupDto;
 import com.kwezal.bearinmind.core.user.dto.UserGroupListItemDto;
@@ -19,6 +18,7 @@ import com.kwezal.bearinmind.core.user.model.UserGroupMember;
 import com.kwezal.bearinmind.core.user.repository.UserGroupMemberRepository;
 import com.kwezal.bearinmind.core.user.repository.UserGroupRepository;
 import com.kwezal.bearinmind.core.utils.AuthHelper;
+import com.kwezal.bearinmind.core.utils.Page;
 import com.kwezal.bearinmind.translation.model.Translation;
 import com.kwezal.bearinmind.translation.repository.TranslationRepository;
 import java.time.OffsetDateTime;

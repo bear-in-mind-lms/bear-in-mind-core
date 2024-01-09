@@ -49,28 +49,32 @@ public class UserService {
     private final UserValidationService userValidationService;
 
     @Transactional(readOnly = false)
-    public UserDto createUser(CreateUserDto createUserDto) {
+    public UserDto createUser(final CreateUserDto createUserDto) {
         userValidationService.validateIfUserDoesNotExist(createUserDto.email(), ErrorCode.USER_EXISTS);
+
         final var applicationLocale = applicationConfig.getApplicationLocale();
-        final var user = userMapper.map(createUserDto, applicationLocale);
+        var user = userMapper.map(createUserDto, applicationLocale);
         final var encodedPassword = passwordEncoder.encode(createUserDto.password());
+
         final var userCredentials = user.getUserCredentials();
         userCredentials.setPassword(encodedPassword);
         userCredentials.setRole(UserRole.STUDENT);
+
         userCredentialsRepository.save(userCredentials);
-        userRepository.save(user);
+        user = userRepository.save(user);
+
         return userMapper.mapToUserDto(user);
     }
 
     @Transactional(readOnly = false)
-    public void updateUser(UpdateUserDto dto) {
+    public void updateUser(final UpdateUserDto dto) {
         final var userId = loggedInUserService.getLoggedInUserId();
         final var user = fetchUserBy(userId);
         final var updatedUser = userMapper.update(user, dto);
         userRepository.save(updatedUser);
     }
 
-    public UserViewDto findUserViewDtoBy(Long id) {
+    public UserViewDto findUserViewDtoBy(final Long id) {
         final var authDetails = loggedInUserService.getAuthenticationDetails();
         final var loggedInUserId = authDetails.userId();
         final var locale = authDetails.locale();
@@ -91,7 +95,7 @@ public class UserService {
         return userMapper.mapToUserViewDto(user, courses, groups, translations);
     }
 
-    public UserMainViewDto findUserMainViewDto(Integer listLength) {
+    public UserMainViewDto findUserMainViewDto(final Integer listLength) {
         final var authDetails = loggedInUserService.getAuthenticationDetails();
         final var userId = authDetails.userId();
         final var locale = authDetails.locale();
@@ -153,7 +157,7 @@ public class UserService {
         );
     }
 
-    private User fetchUserBy(Long id) {
+    private User fetchUserBy(final Long id) {
         return fetch(id, userRepository, User.class);
     }
 }

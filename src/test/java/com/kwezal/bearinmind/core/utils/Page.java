@@ -1,4 +1,4 @@
-package com.kwezal.bearinmind.core.helper;
+package com.kwezal.bearinmind.core.utils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

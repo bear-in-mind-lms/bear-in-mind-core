@@ -2,6 +2,7 @@ package com.kwezal.bearinmind.core.course;
 
 import static com.kwezal.bearinmind.core.utils.AssertionUtils.assertEqualsIgnoringOrder;
 import static com.kwezal.bearinmind.core.utils.AssertionUtils.assertTimeDifferenceLessOrEqual;
+import static com.kwezal.bearinmind.core.utils.TestConstants.NONEXISTENT_ID;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.kwezal.bearinmind.core.ControllerTestInterface;
@@ -11,7 +12,6 @@ import com.kwezal.bearinmind.core.course.model.CourseLesson;
 import com.kwezal.bearinmind.core.course.repository.CourseLessonRepository;
 import com.kwezal.bearinmind.core.exception.ErrorCode;
 import com.kwezal.bearinmind.core.utils.AuthHelper;
-import com.kwezal.bearinmind.core.utils.TestConstants;
 import com.kwezal.bearinmind.exception.response.ErrorResponse;
 import com.kwezal.bearinmind.translation.model.Translation;
 import com.kwezal.bearinmind.translation.repository.TranslationRepository;
@@ -160,7 +160,7 @@ class CourseLessonControllerTest implements ControllerTestInterface {
             .asTeacher(
                 webClient
                     .post()
-                    .uri(builder -> url(builder, "/{courseId}/lesson").build(TestConstants.NONEXISTENT_ID))
+                    .uri(builder -> url(builder, "/{courseId}/lesson").build(NONEXISTENT_ID))
                     .body(Mono.just(dto), CreateCourseLessonDto.class)
             )
             .exchange();
@@ -364,7 +364,7 @@ class CourseLessonControllerTest implements ControllerTestInterface {
             .asTeacher(
                 webClient
                     .put()
-                    .uri(builder -> url(builder, "/lesson/{id}").build(TestConstants.NONEXISTENT_ID))
+                    .uri(builder -> url(builder, "/lesson/{id}").build(NONEXISTENT_ID))
                     .body(Mono.just(dto), UpdateCourseLessonDto.class)
             )
             .exchange();
@@ -530,7 +530,7 @@ class CourseLessonControllerTest implements ControllerTestInterface {
     void Should_ReturnNotFound_When_RequestedCourseLessonDoesNotExist() {
         // WHEN
         final var response = authHelper
-            .asStudent(webClient.get().uri(builder -> url(builder, "/lesson/{id}").build(TestConstants.NONEXISTENT_ID)))
+            .asStudent(webClient.get().uri(builder -> url(builder, "/lesson/{id}").build(NONEXISTENT_ID)))
             .exchange();
 
         // THEN

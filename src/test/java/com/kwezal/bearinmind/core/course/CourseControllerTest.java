@@ -2,6 +2,7 @@ package com.kwezal.bearinmind.core.course;
 
 import static com.kwezal.bearinmind.core.utils.AssertionUtils.assertEqualsIgnoringOrder;
 import static com.kwezal.bearinmind.core.utils.AssertionUtils.assertTimeDifferenceLessOrEqual;
+import static com.kwezal.bearinmind.core.utils.TestConstants.NONEXISTENT_ID;
 import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,11 +14,10 @@ import com.kwezal.bearinmind.core.course.model.CourseUserData;
 import com.kwezal.bearinmind.core.course.repository.CourseRepository;
 import com.kwezal.bearinmind.core.course.repository.CourseUserDataRepository;
 import com.kwezal.bearinmind.core.exception.ErrorCode;
-import com.kwezal.bearinmind.core.helper.Page;
 import com.kwezal.bearinmind.core.user.dto.UserListItemDto;
 import com.kwezal.bearinmind.core.user.model.User;
 import com.kwezal.bearinmind.core.utils.AuthHelper;
-import com.kwezal.bearinmind.core.utils.TestConstants;
+import com.kwezal.bearinmind.core.utils.Page;
 import com.kwezal.bearinmind.exception.response.ErrorResponse;
 import com.kwezal.bearinmind.translation.model.Translation;
 import com.kwezal.bearinmind.translation.repository.TranslationRepository;
@@ -497,7 +497,7 @@ class CourseControllerTest implements ControllerTestInterface {
             .asTeacher(
                 webClient
                     .put()
-                    .uri(builder -> url(builder, "/{id}").build(TestConstants.NONEXISTENT_ID))
+                    .uri(builder -> url(builder, "/{id}").build(NONEXISTENT_ID))
                     .body(Mono.just(dto), UpdateCourseDto.class)
             )
             .exchange();
