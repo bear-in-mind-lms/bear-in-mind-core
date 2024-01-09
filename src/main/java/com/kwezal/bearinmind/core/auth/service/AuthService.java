@@ -6,6 +6,7 @@ import com.kwezal.bearinmind.core.auth.dto.LoginResponseDto;
 import com.kwezal.bearinmind.core.auth.enumeration.AuthClient;
 import com.kwezal.bearinmind.core.exception.ErrorCode;
 import com.kwezal.bearinmind.core.user.dto.CreateUserDto;
+import com.kwezal.bearinmind.core.user.mapper.UserMapper;
 import com.kwezal.bearinmind.core.user.model.User;
 import com.kwezal.bearinmind.core.user.model.UserCredentials_;
 import com.kwezal.bearinmind.core.user.repository.UserRepository;
@@ -31,6 +32,7 @@ public class AuthService {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public LoginResponseDto logIn(
         final HttpServletResponse response,
@@ -51,26 +53,34 @@ public class AuthService {
             throw incorrectCredentialsException(username, password);
         }
 
+        final var fullName = userMapper.mapUserToFullName(user);
+
         return logIn(
             response,
             authClient,
             user.getId(),
             userCredentials.getUsername(),
+            fullName,
             userCredentials.getRole().getAuthorityNames(),
-            user.getLocale()
+            user.getLocale(),
+            user.getImage()
         );
     }
 
     @Transactional(readOnly = false)
     public LoginResponseDto signUp(final HttpServletResponse response, final CreateUserDto dto, final AuthClient authClient) {
         final var user = userService.createUser(dto);
+        final var fullName = userMapper.mapToFullName(dto.firstName(), dto.middleName(), dto.lastName());
+
         return logIn(
             response,
             authClient,
             user.getId(),
             user.getUsername(),
+            fullName,
             user.getRole().getAuthorityNames(),
-            user.getLocale()
+            user.getLocale(),
+            user.getImage()
         );
     }
 
@@ -79,12 +89,21 @@ public class AuthService {
         final AuthClient authClient,
         final Long id,
         final String username,
+        final String fullName,
         final Set<String> authorities,
-        final String locale
+        final String locale,
+        final String image
     ) {
         appendTokenToResponse(response, authClient, username, id, locale, authorities);
 
-        return new LoginResponseDto(id, authorities);
+        return new LoginResponseDto(id, fullName, image, authorities);
+    }
+
+    public void logOut(final HttpServletResponse response, final AuthClient client) {
+        if (client == AuthClient.WEB) {
+            final var emptyTokenCookie = buildJwtCookie(null, 0);
+            response.addCookie(emptyTokenCookie);
+        }
     }
 
     private void appendTokenToResponse(
@@ -107,10 +126,14 @@ public class AuthService {
     }
 
     private Cookie buildJwtCookie(final String token) {
+        return buildJwtCookie(token, jwtConfig.getLifetimeMinutes() * 60);
+    }
+
+    private Cookie buildJwtCookie(final String token, final int maxAge) {
         final var jwtCookie = new Cookie(jwtConfig.getCookieName(), token);
         jwtCookie.setHttpOnly(true);
         jwtCookie.setSecure(true);
-        jwtCookie.setMaxAge(jwtConfig.getLifetimeMinutes() * 60);
+        jwtCookie.setMaxAge(maxAge);
         jwtCookie.setPath("/");
         return jwtCookie;
     }

@@ -9,14 +9,14 @@ import org.springframework.stereotype.Component;
 public class JwtConfig {
 
     @Value("${application.security.jwt.signing-key}")
-    String signingKey;
+    private String signingKey;
 
     @Value("${application.security.jwt.cookie-name}")
-    String cookieName;
+    private String cookieName;
 
     @Value("${application.security.jwt.authorization-header-prefix}")
-    String authorizationHeaderPrefix;
+    private String authorizationHeaderPrefix;
 
     @Value("${application.security.jwt.lifetime-minutes}")
-    Integer lifetimeMinutes;
+    private Integer lifetimeMinutes;
 }

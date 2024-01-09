@@ -39,7 +39,9 @@ public class AuthController {
      * Registers and logs in the user.
      * The access token is passed in the Authorization header or in the cookie depending on the client type.
      *
+     * @param response      HTTP servlet response
      * @param createUserDto user data
+     * @param client        type of client
      * @return created user data
      */
     @PostMapping("/sign-up")
@@ -49,5 +51,16 @@ public class AuthController {
         @RequestParam(required = false, defaultValue = "API") AuthClient client
     ) {
         return authService.signUp(response, createUserDto, client);
+    }
+
+    /**
+     * Logs out the user. For the web client it removes the token cookie, for the API client it does nothing.
+     *
+     * @param response HTTP servlet response
+     * @param client   type of client
+     */
+    @PostMapping("/log-out")
+    public void logOut(HttpServletResponse response, @RequestParam(required = false, defaultValue = "API") AuthClient client) {
+        authService.logOut(response, client);
     }
 }

@@ -23,13 +23,13 @@ public class User {
     @JoinColumn(name = "user_credentials_id", referencedColumnName = "id")
     UserCredentials userCredentials;
 
-    @Column
+    @Column(nullable = false)
     String firstName;
 
     @Column
     String middleName;
 
-    @Column
+    @Column(nullable = false)
     String lastName;
 
     @Column

@@ -2,17 +2,18 @@ package com.kwezal.bearinmind.core.auth;
 
 import static com.kwezal.bearinmind.core.utils.AssertionUtils.assertEqualsIgnoringOrder;
 import static com.kwezal.bearinmind.core.utils.TestConstants.ID_SEQUENCE_START;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.kwezal.bearinmind.core.ControllerTestInterface;
 import com.kwezal.bearinmind.core.auth.dto.CredentialsDto;
 import com.kwezal.bearinmind.core.auth.dto.LoginResponseDto;
+import com.kwezal.bearinmind.core.auth.enumeration.AuthClient;
 import com.kwezal.bearinmind.core.auth.service.AuthJwtService;
 import com.kwezal.bearinmind.core.exception.ErrorCode;
 import com.kwezal.bearinmind.core.user.dto.CreateUserDto;
 import com.kwezal.bearinmind.core.user.dto.UserRole;
 import com.kwezal.bearinmind.exception.response.ErrorResponse;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -56,6 +57,7 @@ class AuthControllerTest implements ControllerTestInterface {
         final var password = "password";
         final var dto = new CredentialsDto(username, password);
         final var expectedUserId = 1;
+        final var expectedFullName = "Keith Master";
         final var expectedAuthorities = UserRole.ADMINISTRATOR_ROLE_GROUP.getAuthorityNames();
 
         // WHEN
@@ -73,6 +75,8 @@ class AuthControllerTest implements ControllerTestInterface {
             .expectBody(LoginResponseDto.class)
             .value(responseDto -> {
                 assertEquals(expectedUserId, responseDto.userId());
+                assertEquals(expectedFullName, responseDto.userFullName());
+                assertNull(responseDto.userImage());
                 assertEqualsIgnoringOrder(expectedAuthorities, responseDto.authorities());
             });
 
@@ -161,9 +165,11 @@ class AuthControllerTest implements ControllerTestInterface {
         final var email = "j.doe@bearinmind.kwezal.com";
         final var password = "password";
         final var firstName = "John";
+        final var middleName = "Joe";
         final var lastName = "Doe";
-        final var dto = new CreateUserDto(email, password, firstName, lastName, null);
+        final var dto = new CreateUserDto(email, password, firstName, lastName, middleName);
         final var expectedUserId = ID_SEQUENCE_START;
+        final var expectedFullName = firstName + " " + middleName + " " + lastName;
         final var expectedAuthorities = UserRole.STUDENT.getAuthorityNames();
 
         // WHEN
@@ -181,6 +187,8 @@ class AuthControllerTest implements ControllerTestInterface {
             .expectBody(LoginResponseDto.class)
             .value(responseDto -> {
                 assertEquals(expectedUserId, responseDto.userId());
+                assertEquals(expectedFullName, responseDto.userFullName());
+                assertNull(responseDto.userImage());
                 assertEquals(expectedAuthorities, responseDto.authorities());
             });
 
@@ -273,5 +281,33 @@ class AuthControllerTest implements ControllerTestInterface {
             Arguments.of(new CreateUserDto("j.doe@bearinmind.kwezal.com", "password", " ", "Doe", null), Set.of("firstName")),
             Arguments.of(new CreateUserDto("j.doe@bearinmind.kwezal.com", "password", "John", " ", null), Set.of("lastName"))
         );
+    }
+
+    @Test
+    void Should_RemoveCookie_When_WebClientLogOut() {
+        // GIVEN
+        final var cookieName = jwtConfig.getCookieName();
+
+        // WHEN
+        final var response = webClient
+            .post()
+            .uri(builder -> url(builder, "/log-out").queryParam("client", AuthClient.WEB.name()).build())
+            .exchange();
+
+        // THEN
+        response.expectStatus().is2xxSuccessful();
+
+        // AND
+        response
+            .expectCookie()
+            .value(
+                cookieName,
+                cookie -> {
+                    assertEquals("", cookie);
+                }
+            );
+        response.expectCookie().httpOnly(cookieName, true);
+        response.expectCookie().secure(cookieName, true);
+        response.expectCookie().maxAge(cookieName, Duration.ZERO);
     }
 }

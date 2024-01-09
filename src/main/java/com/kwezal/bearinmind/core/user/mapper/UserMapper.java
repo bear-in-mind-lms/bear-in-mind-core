@@ -1,6 +1,6 @@
 package com.kwezal.bearinmind.core.user.mapper;
 
-import static org.apache.logging.log4j.util.Strings.isBlank;
+import static java.util.Objects.nonNull;
 
 import com.kwezal.bearinmind.core.course.mapper.CourseMapper;
 import com.kwezal.bearinmind.core.course.view.UserCourseView;
@@ -10,6 +10,7 @@ import com.kwezal.bearinmind.core.user.view.UserGroupListItemView;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -35,7 +36,7 @@ public interface UserMapper {
 
     User update(@MappingTarget User user, UpdateUserDto updateUserDto);
 
-    @Mapping(target = "name", source = "user", qualifiedByName = "joinFirstAndMiddleAndLastName")
+    @Mapping(target = "name", source = "user", qualifiedByName = "mapUserToFullName")
     @Mapping(target = "courses", expression = "java( courseMapper.mapToUserCourseDtos(courses, translations) )")
     @Mapping(target = "groups", expression = "java( userGroupMapper.mapToUserGroupListItemDtos(groups, translations) )")
     UserViewDto mapToUserViewDto(
@@ -61,13 +62,19 @@ public interface UserMapper {
         boolean hasStudents
     );
 
-    @Named("joinFirstAndMiddleAndLastName")
-    default String joinFirstAndMiddleAndLastName(User user) {
-        return String.join(
-            " ",
-            isBlank(user.getMiddleName())
-                ? List.of(user.getFirstName(), user.getLastName())
-                : List.of(user.getFirstName(), user.getMiddleName(), user.getLastName())
-        );
+    @Named("mapUserToFullName")
+    default String mapUserToFullName(User user) {
+        return mapToFullName(user.getFirstName(), user.getMiddleName(), user.getLastName());
+    }
+
+    default String mapToFullName(String firstName, String middleName, String lastName) {
+        final var stringJoiner = new StringJoiner(" ");
+        stringJoiner.add(firstName);
+        if (nonNull(middleName)) {
+            stringJoiner.add(middleName);
+        }
+        stringJoiner.add(lastName);
+
+        return stringJoiner.toString();
     }
 }
