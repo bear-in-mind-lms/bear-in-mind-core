@@ -1,7 +1,7 @@
 package com.kwezal.bearinmind.core.course.model;
 
 import com.kwezal.bearinmind.core.user.model.UserGroup;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

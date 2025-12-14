@@ -1,9 +1,9 @@
 package com.kwezal.bearinmind.core.course.dto;
 
 import com.kwezal.bearinmind.core.user.dto.UserListItemDto;
+import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 
 public record CourseViewDto(
     @NotNull String name,

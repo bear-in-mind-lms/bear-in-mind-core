@@ -5,47 +5,50 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.5</version>
+        <version>4.0.0</version>
         <relativePath/>
     </parent>
 
     <groupId>com.kwezal.bearinmind</groupId>
     <artifactId>bear-in-mind-core</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2</version>
     <name>Bear in Mind Core</name>
     <description>Core microservice responsible for handling essentials, i.e. courses and users</description>
 
     <properties>
-        <java.version>17</java.version>
-        <mapstruct.version>1.5.3.Final</mapstruct.version>
-        <spring-security-oauth2.version>2.5.2.RELEASE</spring-security-oauth2.version>
+        <java.version>25</java.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
         <spring-security-jwt.version>1.1.1.RELEASE</spring-security-jwt.version>
         <jjwt.version>0.11.5</jjwt.version>
-        <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
-        <spring-plugin-core.version>2.0.0.RELEASE</spring-plugin-core.version>
-        <lombok.version>1.18.20</lombok.version>
-        <testcontainers.postgresql.version>1.17.6</testcontainers.postgresql.version>
-        <reactive-streams.version>1.0.3</reactive-streams.version>
-        <hibernate-jpamodelgen.version>5.4.3.Final</hibernate-jpamodelgen.version>
-        <bear-in-mind-translations.version>0.0.1</bear-in-mind-translations.version>
-        <bear-in-mind-file-storage.version>0.0.1</bear-in-mind-file-storage.version>
-        <bear-in-mind-exceptions.version>0.0.1</bear-in-mind-exceptions.version>
+        <springdoc-openapi-starter-webmvc-ui.version>3.0.0</springdoc-openapi-starter-webmvc-ui.version>
+        <therapi-runtime-javadoc.version>0.15.0</therapi-runtime-javadoc.version>
+        <spring-plugin-core.version>4.0.0</spring-plugin-core.version>
+        <lombok.version>1.18.42</lombok.version>
+        <testcontainers.postgresql.version>1.21.3</testcontainers.postgresql.version>
+        <bear-in-mind-translations.version>0.0.2</bear-in-mind-translations.version>
+        <bear-in-mind-file-storage.version>0.0.2</bear-in-mind-file-storage.version>
+        <bear-in-mind-exceptions.version>0.0.2</bear-in-mind-exceptions.version>
 
         <!-- Plugin Versions -->
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <prettier-maven-plugin.version>0.18</prettier-maven-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <prettier-maven-plugin.version>0.22</prettier-maven-plugin.version>
         <prettier-java.version>2.0.0</prettier-java.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-liquibase</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.github.therapi</groupId>
+            <artifactId>therapi-runtime-javadoc</artifactId>
+            <version>${therapi-runtime-javadoc.version}</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -66,14 +69,17 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-webclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
         <!-- SECURITY -->
         <dependency>
-            <groupId>org.springframework.security.oauth</groupId>
-            <artifactId>spring-security-oauth2</artifactId>
-            <version>${spring-security-oauth2.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -101,9 +107,9 @@
 
         <!-- SWAGGER -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>${springfox-boot-starter.version}</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.plugin</groupId>
@@ -157,6 +163,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-webtestclient</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
             <version>${testcontainers.postgresql.version}</version>
@@ -199,9 +210,9 @@
                             <version>${mapstruct.version}</version>
                         </path>
                         <path>
-                            <groupId>org.hibernate</groupId>
-                            <artifactId>hibernate-jpamodelgen</artifactId>
-                            <version>${hibernate-jpamodelgen.version}</version>
+                            <groupId>com.github.therapi</groupId>
+                            <artifactId>therapi-runtime-javadoc-scribe</artifactId>
+                            <version>${therapi-runtime-javadoc.version}</version>
                         </path>
                     </annotationProcessorPaths>
                     <compilerArgs>

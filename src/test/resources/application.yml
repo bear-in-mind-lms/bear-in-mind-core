@@ -12,7 +12,8 @@ application:
 
 spring:
   application:
-    name: bear-in-mind-core
+    name: "@project.artifactId@"
+    version: "@project.version@"
   jpa:
     hibernate:
       ddl-auto: validate

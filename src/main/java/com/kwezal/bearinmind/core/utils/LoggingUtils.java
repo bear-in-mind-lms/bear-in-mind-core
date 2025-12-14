@@ -54,7 +54,7 @@ public class LoggingUtils {
     }
 
     private static void appendArguments(final StringBuilder sb, final String prefix, final Map<String, Object> arguments) {
-        if (arguments.size() > 0) {
+        if (!arguments.isEmpty()) {
             sb.append(prefix);
 
             final var sj = new StringJoiner(ARGUMENTS_DELIMITER);

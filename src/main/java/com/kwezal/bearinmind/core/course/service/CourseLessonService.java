@@ -14,7 +14,6 @@ import com.kwezal.bearinmind.core.course.mapper.CourseLessonMapper;
 import com.kwezal.bearinmind.core.course.mapper.CourseLessonPartMapper;
 import com.kwezal.bearinmind.core.course.model.Course;
 import com.kwezal.bearinmind.core.course.model.CourseLesson;
-import com.kwezal.bearinmind.core.course.model.CourseLesson_;
 import com.kwezal.bearinmind.core.course.repository.CourseLessonPartRepository;
 import com.kwezal.bearinmind.core.course.repository.CourseLessonRepository;
 import com.kwezal.bearinmind.core.course.repository.CourseRepository;
@@ -149,11 +148,7 @@ public class CourseLessonService {
         final var isInCourse = courseUserDataRepository.existsByCourseIdAndUserId(lesson.getCourse().getId(), userId);
 
         if (!isInCourse || (nonNull(lesson.getStartDateTime()) && OffsetDateTime.now().isBefore(lesson.getStartDateTime()))) {
-            throw new ForbiddenException(
-                CourseLesson.class,
-                Map.of(CourseLesson_.ID, id.toString()),
-                ErrorCode.NO_ACCESS_TO_LESSON
-            );
+            throw new ForbiddenException(CourseLesson.class, Map.of("id", id.toString()), ErrorCode.NO_ACCESS_TO_LESSON);
         }
 
         final var translations = getTranslations(locale, lesson);

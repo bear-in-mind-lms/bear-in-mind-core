@@ -5,7 +5,7 @@ import com.kwezal.bearinmind.core.auth.dto.LoginResponseDto;
 import com.kwezal.bearinmind.core.auth.enumeration.AuthClient;
 import com.kwezal.bearinmind.core.auth.service.AuthService;
 import com.kwezal.bearinmind.core.user.dto.CreateUserDto;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

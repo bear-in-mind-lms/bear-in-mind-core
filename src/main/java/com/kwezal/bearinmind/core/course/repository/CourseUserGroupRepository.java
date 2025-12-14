@@ -1,12 +1,11 @@
 package com.kwezal.bearinmind.core.course.repository;
 
 import com.kwezal.bearinmind.core.course.model.CourseUserGroup;
+import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface CourseUserGroupRepository extends JpaRepository<CourseUserGroup, Long> {
+public interface CourseUserGroupRepository extends JpaRepository<@NonNull CourseUserGroup, @NonNull Long> {
     /**
      * Checks if a given user is a member of one of the user groups associated with a given course.
      *

@@ -4,7 +4,7 @@ import static com.kwezal.bearinmind.core.utils.AssertionUtils.assertEqualsIgnori
 import static com.kwezal.bearinmind.core.utils.TestConstants.ID_SEQUENCE_START;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.kwezal.bearinmind.core.ControllerTestInterface;
+import com.kwezal.bearinmind.core.ControllerTest;
 import com.kwezal.bearinmind.core.auth.dto.CredentialsDto;
 import com.kwezal.bearinmind.core.auth.dto.LoginResponseDto;
 import com.kwezal.bearinmind.core.auth.enumeration.AuthClient;
@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -34,15 +33,12 @@ import reactor.core.publisher.Mono;
     executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
 )
 @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)
-class AuthControllerTest implements ControllerTestInterface {
+class AuthControllerTest extends ControllerTest {
 
     @Override
     public String urlBase() {
         return "/auth";
     }
-
-    @Autowired
-    private WebTestClient webClient;
 
     @Autowired
     private JwtConfig jwtConfig;
@@ -308,6 +304,6 @@ class AuthControllerTest implements ControllerTestInterface {
             );
         response.expectCookie().httpOnly(cookieName, true);
         response.expectCookie().secure(cookieName, true);
-        response.expectCookie().maxAge(cookieName, Duration.ZERO);
+        response.expectCookie().maxAge(cookieName, Duration.ofSeconds(-1));
     }
 }

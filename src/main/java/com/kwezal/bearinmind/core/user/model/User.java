@@ -1,7 +1,7 @@
 package com.kwezal.bearinmind.core.user.model;
 
+import jakarta.persistence.*;
 import java.time.OffsetDateTime;
-import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

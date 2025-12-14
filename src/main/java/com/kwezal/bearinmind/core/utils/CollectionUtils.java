@@ -2,10 +2,10 @@ package com.kwezal.bearinmind.core.utils;
 
 import static java.util.Objects.nonNull;
 
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

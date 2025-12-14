@@ -4,7 +4,7 @@ import static com.kwezal.bearinmind.core.exception.ErrorCode.CANNOT_JOIN_GROUP;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.kwezal.bearinmind.core.ControllerTestInterface;
+import com.kwezal.bearinmind.core.ControllerTest;
 import com.kwezal.bearinmind.core.user.enumeration.UserGroupRole;
 import com.kwezal.bearinmind.core.user.repository.UserGroupMemberRepository;
 import com.kwezal.bearinmind.core.utils.AuthHelper;
@@ -14,20 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = "/db/cleanup/USER_GROUP_MEMBER.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)
-class UserGroupMemberControllerTest implements ControllerTestInterface {
+class UserGroupMemberControllerTest extends ControllerTest {
 
     @Override
     public String urlBase() {
         return "/user/group";
     }
-
-    @Autowired
-    private WebTestClient webClient;
 
     @Autowired
     private UserGroupMemberRepository userGroupMemberRepository;

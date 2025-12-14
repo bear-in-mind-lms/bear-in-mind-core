@@ -6,8 +6,9 @@ import com.kwezal.bearinmind.core.user.dto.UserListItemDto;
 import com.kwezal.bearinmind.core.user.dto.UserMainViewDto;
 import com.kwezal.bearinmind.core.user.dto.UserViewDto;
 import com.kwezal.bearinmind.core.user.service.UserService;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -64,7 +65,7 @@ public class UserController {
      * @return user page
      */
     @GetMapping("/list/group-members")
-    public Page<UserListItemDto> findGroupMemberPage(
+    public Page<@NonNull UserListItemDto> findGroupMemberPage(
         @RequestParam @Min(0) Integer pageNumber,
         @RequestParam @Min(1) @Max(100) Integer pageSize
     ) {
@@ -79,7 +80,7 @@ public class UserController {
      * @return user page
      */
     @GetMapping("/list/students")
-    public Page<UserListItemDto> findStudentPage(
+    public Page<@NonNull UserListItemDto> findStudentPage(
         @RequestParam @Min(0) Integer pageNumber,
         @RequestParam @Min(1) @Max(100) Integer pageSize
     ) {
@@ -94,7 +95,7 @@ public class UserController {
      * @return user page
      */
     @GetMapping("/list/teachers")
-    public Page<UserListItemDto> findTeacherPage(
+    public Page<@NonNull UserListItemDto> findTeacherPage(
         @RequestParam @Min(0) Integer pageNumber,
         @RequestParam @Min(1) @Max(100) Integer pageSize
     ) {

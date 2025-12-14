@@ -1,10 +1,10 @@
 package com.kwezal.bearinmind.core.user.dto;
 
 import com.kwezal.bearinmind.core.course.dto.UserCourseDto;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.List;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 public record UserViewDto(
     @NotBlank String name,
