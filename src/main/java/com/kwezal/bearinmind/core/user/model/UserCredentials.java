@@ -1,7 +1,7 @@
 package com.kwezal.bearinmind.core.user.model;
 
 import com.kwezal.bearinmind.core.user.dto.UserRole;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity

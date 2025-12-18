@@ -1,8 +1,8 @@
 package com.kwezal.bearinmind.core.course.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 public record CourseLessonViewDto(
     @NotBlank String topic,

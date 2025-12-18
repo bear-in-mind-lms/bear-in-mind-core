@@ -1,7 +1,7 @@
 package com.kwezal.bearinmind.core.course.dto;
 
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 
 public record CourseMainViewDto(
     @NotNull List<CourseListItemDto> conductedCourses,

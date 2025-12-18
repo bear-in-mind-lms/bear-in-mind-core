@@ -5,8 +5,9 @@ import com.kwezal.bearinmind.core.user.dto.CreateOrUpdateUserGroupDto;
 import com.kwezal.bearinmind.core.user.dto.UserGroupDto;
 import com.kwezal.bearinmind.core.user.dto.UserGroupListItemDto;
 import com.kwezal.bearinmind.core.user.service.UserGroupService;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -66,7 +67,7 @@ public class UserGroupController {
      * @return user group page
      */
     @GetMapping("/list/registered")
-    public Page<UserGroupListItemDto> findRegisteredUserGroupPage(
+    public Page<@NonNull UserGroupListItemDto> findRegisteredUserGroupPage(
         @RequestParam @Min(0) Integer pageNumber,
         @RequestParam @Min(1) @Max(100) Integer pageSize
     ) {
@@ -82,7 +83,7 @@ public class UserGroupController {
      * @return user group page
      */
     @GetMapping("/list/available")
-    public Page<UserGroupListItemDto> findAvailableUserGroupPage(
+    public Page<@NonNull UserGroupListItemDto> findAvailableUserGroupPage(
         @RequestParam @Min(0) Integer pageNumber,
         @RequestParam @Min(1) @Max(100) Integer pageSize
     ) {

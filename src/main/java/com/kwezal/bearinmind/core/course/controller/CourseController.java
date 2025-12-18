@@ -5,8 +5,9 @@ import com.kwezal.bearinmind.core.course.dto.*;
 import com.kwezal.bearinmind.core.course.service.CourseService;
 import com.kwezal.bearinmind.core.logging.ControllerLogging;
 import com.kwezal.bearinmind.core.user.dto.UserRole;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -67,7 +68,7 @@ public class CourseController {
      * @return user page
      */
     @GetMapping("/list/conducted")
-    public Page<CourseListItemDto> findConductedCoursePage(
+    public Page<@NonNull CourseListItemDto> findConductedCoursePage(
         @RequestParam @Min(0) Integer pageNumber,
         @RequestParam @Min(1) @Max(100) Integer pageSize
     ) {
@@ -83,7 +84,7 @@ public class CourseController {
      * @return user page
      */
     @GetMapping("/list/active")
-    public Page<CourseListItemDto> findActiveCoursePage(
+    public Page<@NonNull CourseListItemDto> findActiveCoursePage(
         @RequestParam @Min(0) Integer pageNumber,
         @RequestParam @Min(1) @Max(100) Integer pageSize
     ) {
@@ -99,7 +100,7 @@ public class CourseController {
      * @return user page
      */
     @GetMapping("/list/available")
-    public Page<CourseListItemDto> findAvailableCoursePage(
+    public Page<@NonNull CourseListItemDto> findAvailableCoursePage(
         @RequestParam @Min(0) Integer pageNumber,
         @RequestParam @Min(1) @Max(100) Integer pageSize
     ) {
@@ -115,7 +116,7 @@ public class CourseController {
      * @return user page
      */
     @GetMapping("/list/completed")
-    public Page<CourseListItemDto> findCompletedCoursePage(
+    public Page<@NonNull CourseListItemDto> findCompletedCoursePage(
         @RequestParam @Min(0) Integer pageNumber,
         @RequestParam @Min(1) @Max(100) Integer pageSize
     ) {

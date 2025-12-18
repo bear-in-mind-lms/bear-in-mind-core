@@ -25,7 +25,7 @@ public class FileStorageService {
     private final FileValidationService fileValidationService;
     private final LoggedInUserService loggedInUserService;
 
-    public String uploadImage(MultipartFile multipartFile, FileAssetType fileAssetType, String identifier) {
+    public String uploadImage(final MultipartFile multipartFile, final FileAssetType fileAssetType, final String identifier) {
         fileValidationService.validateImageHasSupportedExtension(multipartFile);
         fileValidationService.validateImageDoesNotExceedSizeLimit(multipartFile, fileAssetType, identifier);
         fileValidationService.validateUserHasWritePermissionToFile(
@@ -40,7 +40,7 @@ public class FileStorageService {
         return fileUrl;
     }
 
-    private File getFile(MultipartFile multipartFile) {
+    private File getFile(final MultipartFile multipartFile) {
         final var filename = getFilename(multipartFile);
         final var file = new File(filename);
         try (OutputStream os = new FileOutputStream(file)) {
@@ -51,7 +51,7 @@ public class FileStorageService {
         return file;
     }
 
-    private String getFilename(MultipartFile multipartFile) {
+    private String getFilename(final MultipartFile multipartFile) {
         if (isNull(multipartFile.getOriginalFilename())) {
             throw new InvalidRequestDataException(
                 MultipartFile.class,
@@ -64,7 +64,7 @@ public class FileStorageService {
         );
     }
 
-    public void delete(String url) {
+    public void delete(final String url) {
         fileStorageClientApi.delete(url);
     }
 }

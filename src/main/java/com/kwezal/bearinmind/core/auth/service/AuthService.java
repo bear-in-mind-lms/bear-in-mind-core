@@ -8,14 +8,13 @@ import com.kwezal.bearinmind.core.exception.ErrorCode;
 import com.kwezal.bearinmind.core.user.dto.CreateUserDto;
 import com.kwezal.bearinmind.core.user.mapper.UserMapper;
 import com.kwezal.bearinmind.core.user.model.User;
-import com.kwezal.bearinmind.core.user.model.UserCredentials_;
 import com.kwezal.bearinmind.core.user.repository.UserRepository;
 import com.kwezal.bearinmind.core.user.service.UserService;
 import com.kwezal.bearinmind.exception.AuthorizationException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Set;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -141,7 +140,7 @@ public class AuthService {
     private AuthorizationException incorrectCredentialsException(final String username, final String password) {
         return new AuthorizationException(
             User.class,
-            Map.of(UserCredentials_.USERNAME, username, UserCredentials_.PASSWORD, password),
+            Map.of("username", username, "password", password),
             ErrorCode.INCORRECT_CREDENTIALS
         );
     }

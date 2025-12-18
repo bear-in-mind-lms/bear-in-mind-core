@@ -9,13 +9,13 @@ import com.kwezal.bearinmind.core.user.dto.UserGroupDto;
 import com.kwezal.bearinmind.core.user.dto.UserGroupListItemDto;
 import com.kwezal.bearinmind.core.user.mapper.UserGroupMapper;
 import com.kwezal.bearinmind.core.user.model.UserGroup;
-import com.kwezal.bearinmind.core.user.model.UserGroup_;
 import com.kwezal.bearinmind.core.user.repository.UserGroupRepository;
 import com.kwezal.bearinmind.core.user.view.UserGroupListItemView;
 import com.kwezal.bearinmind.exception.ResourceNotFoundException;
 import com.kwezal.bearinmind.translation.service.TranslationService;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,19 +53,19 @@ public class UserGroupService {
         translationService.updateMultilingualTranslation(nameIdentifier, dto.name());
     }
 
-    public UserGroupDto findUserGroupDtoBy(Long id) {
+    public UserGroupDto findUserGroupDtoBy(final Long id) {
         final var locale = loggedInUserService.getLoggedInUserLocale();
 
         final var userGroup = userGroupRepository.findUserGroupWithMembersById(id);
         if (isNull(userGroup)) {
-            throw new ResourceNotFoundException(UserGroup.class, Map.of(UserGroup_.ID, id));
+            throw new ResourceNotFoundException(UserGroup.class, Map.of("id", id));
         }
 
         final var translation = translationService.findTextByIdentifierAndLocale(userGroup.getNameIdentifier(), locale);
         return userGroupMapper.mapToUserGroupDto(userGroup, translation);
     }
 
-    public Page<UserGroupListItemDto> findRegisteredUserGroupPage(Integer pageNumber, Integer pageSize) {
+    public Page<@NonNull UserGroupListItemDto> findRegisteredUserGroupPage(final Integer pageNumber, final Integer pageSize) {
         final var authDetails = loggedInUserService.getAuthenticationDetails();
         final var userId = authDetails.userId();
         final var locale = authDetails.locale();
@@ -81,7 +81,7 @@ public class UserGroupService {
         );
     }
 
-    public Page<UserGroupListItemDto> findAvailableUserGroupPage(Integer pageNumber, Integer pageSize) {
+    public Page<@NonNull UserGroupListItemDto> findAvailableUserGroupPage(final Integer pageNumber, final Integer pageSize) {
         final var authDetails = loggedInUserService.getAuthenticationDetails();
         final var userId = authDetails.userId();
         final var locale = authDetails.locale();
@@ -97,7 +97,7 @@ public class UserGroupService {
         );
     }
 
-    private Map<Integer, String> getTranslations(Page<UserGroupListItemView> groups, String locale) {
+    private Map<Integer, String> getTranslations(final Page<@NonNull UserGroupListItemView> groups, final String locale) {
         return translationService.findAllIdentifierAndTextByIdentifiersAndLocale(
             groups.stream().map(UserGroupListItemView::getNameIdentifier).collect(Collectors.toList()),
             locale

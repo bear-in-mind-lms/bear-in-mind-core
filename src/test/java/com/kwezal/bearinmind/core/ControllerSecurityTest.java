@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-public abstract class ControllerSecurityTest implements ControllerTestInterface {
-
-    @Autowired
-    protected WebTestClient webClient;
+public abstract class ControllerSecurityTest extends ControllerTest {
 
     @Autowired
     protected AuthHelper authHelper;

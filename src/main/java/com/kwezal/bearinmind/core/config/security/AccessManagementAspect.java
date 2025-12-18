@@ -2,7 +2,6 @@ package com.kwezal.bearinmind.core.config.security;
 
 import com.kwezal.bearinmind.core.auth.service.LoggedInUserService;
 import com.kwezal.bearinmind.core.user.model.UserCredentials;
-import com.kwezal.bearinmind.core.user.model.UserCredentials_;
 import com.kwezal.bearinmind.exception.AuthorizationException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -31,7 +30,7 @@ public class AccessManagementAspect {
         if (Arrays.stream(annotation.value()).noneMatch(loggedInUserService.getLoggedInUserRoles()::contains)) {
             throw new AuthorizationException(
                 UserCredentials.class,
-                Map.of(UserCredentials_.ROLE, loggedInUserService.getLoggedInUserRoles().toString())
+                Map.of("role", loggedInUserService.getLoggedInUserRoles().toString())
             );
         }
     }

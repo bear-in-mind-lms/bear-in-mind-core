@@ -4,7 +4,7 @@ import static com.kwezal.bearinmind.core.utils.AssertionUtils.assertEqualsIgnori
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.kwezal.bearinmind.core.ControllerTestInterface;
+import com.kwezal.bearinmind.core.ControllerTest;
 import com.kwezal.bearinmind.core.course.enumeration.CourseRole;
 import com.kwezal.bearinmind.core.user.dto.*;
 import com.kwezal.bearinmind.core.user.model.User;
@@ -24,7 +24,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -33,15 +32,12 @@ import reactor.core.publisher.Mono;
     executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
 )
 @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)
-class UserControllerTest implements ControllerTestInterface {
+class UserControllerTest extends ControllerTest {
 
     @Override
     public String urlBase() {
         return "/user";
     }
-
-    @Autowired
-    private WebTestClient webClient;
 
     @Autowired
     private AuthHelper authHelper;

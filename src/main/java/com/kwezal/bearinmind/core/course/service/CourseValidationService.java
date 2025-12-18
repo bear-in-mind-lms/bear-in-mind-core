@@ -8,7 +8,6 @@ import com.kwezal.bearinmind.core.course.enumeration.CourseRole;
 import com.kwezal.bearinmind.core.course.model.Course;
 import com.kwezal.bearinmind.core.course.model.CourseUserData;
 import com.kwezal.bearinmind.core.course.model.CourseUserGroup;
-import com.kwezal.bearinmind.core.course.model.Course_;
 import com.kwezal.bearinmind.core.course.repository.CourseUserDataRepository;
 import com.kwezal.bearinmind.core.course.repository.CourseUserGroupRepository;
 import com.kwezal.bearinmind.core.exception.ErrorCode;
@@ -57,7 +56,7 @@ class CourseValidationService {
         );
 
         if (!isInCourse) {
-            throw new ForbiddenException(Course.class, Map.of(Course_.ID, userId.toString()), ErrorCode.NO_ACCESS_TO_LESSON);
+            throw new ForbiddenException(Course.class, Map.of("id", userId.toString()), ErrorCode.NO_ACCESS_TO_LESSON);
         }
     }
 

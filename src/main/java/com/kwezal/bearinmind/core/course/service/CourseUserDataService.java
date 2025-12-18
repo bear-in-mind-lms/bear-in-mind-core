@@ -7,7 +7,6 @@ import com.kwezal.bearinmind.core.course.enumeration.CourseRole;
 import com.kwezal.bearinmind.core.course.mapper.CourseUserDataMapper;
 import com.kwezal.bearinmind.core.course.model.Course;
 import com.kwezal.bearinmind.core.course.model.CourseUserData;
-import com.kwezal.bearinmind.core.course.model.CourseUserData_;
 import com.kwezal.bearinmind.core.course.repository.CourseRepository;
 import com.kwezal.bearinmind.core.course.repository.CourseUserDataRepository;
 import com.kwezal.bearinmind.core.user.model.User;
@@ -50,10 +49,7 @@ public class CourseUserDataService {
         final var role = courseUserDataRepository.findCourseRoleByCourseIdAndUserId(courseId, userId);
 
         return role.orElseThrow(() ->
-            new ResourceNotFoundException(
-                CourseUserData.class,
-                Map.of(CourseUserData_.COURSE, courseId, CourseUserData_.USER, userId)
-            )
+            new ResourceNotFoundException(CourseUserData.class, Map.of("course", courseId, "user", userId))
         );
     }
 
@@ -62,7 +58,7 @@ public class CourseUserDataService {
         final var role = courseUserDataRepository.findCourseRoleByCourseLessonIdAndUserId(lessonId, userId);
 
         return role.orElseThrow(() ->
-            new ResourceNotFoundException(CourseUserData.class, Map.of("lesson", lessonId, CourseUserData_.USER, userId))
+            new ResourceNotFoundException(CourseUserData.class, Map.of("lesson", lessonId, "user", userId))
         );
     }
 }

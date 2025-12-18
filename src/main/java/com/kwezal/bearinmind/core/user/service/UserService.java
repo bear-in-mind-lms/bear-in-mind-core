@@ -20,6 +20,7 @@ import com.kwezal.bearinmind.translation.service.TranslationService;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -129,13 +130,13 @@ public class UserService {
         return userMapper.mapToUserMainViewDto(translations, registeredGroups, availableGroups, hasTeachers, hasStudents);
     }
 
-    public Page<UserListItemDto> findGroupMemberPage(final Integer pageNumber, final Integer pageSize) {
+    public Page<@NonNull UserListItemDto> findGroupMemberPage(final Integer pageNumber, final Integer pageSize) {
         final var userId = loggedInUserService.getLoggedInUserId();
 
         return userRepository.findAllGroupMemberUserListItemByUserId(userId, Pageable.ofSize(pageSize).withPage(pageNumber));
     }
 
-    public Page<UserListItemDto> findStudentPage(final Integer pageNumber, final Integer pageSize) {
+    public Page<@NonNull UserListItemDto> findStudentPage(final Integer pageNumber, final Integer pageSize) {
         final var userId = loggedInUserService.getLoggedInUserId();
 
         return userRepository.findAllUserListItemByUserIdAndCourseRoleIn(
@@ -146,7 +147,7 @@ public class UserService {
         );
     }
 
-    public Page<UserListItemDto> findTeacherPage(final Integer pageNumber, final Integer pageSize) {
+    public Page<@NonNull UserListItemDto> findTeacherPage(final Integer pageNumber, final Integer pageSize) {
         final var userId = loggedInUserService.getLoggedInUserId();
 
         return userRepository.findAllUserListItemByUserIdAndCourseRoleIn(

@@ -1,7 +1,6 @@
 package com.kwezal.bearinmind.core.config.security;
 
 import com.kwezal.bearinmind.core.user.model.UserCredentials;
-import com.kwezal.bearinmind.core.user.model.UserCredentials_;
 import com.kwezal.bearinmind.core.user.repository.UserCredentialsRepository;
 import com.kwezal.bearinmind.exception.ResourceNotFoundException;
 import java.util.Map;
@@ -29,7 +28,6 @@ public class AppUserDetailsService implements UserDetailsService {
                     user.getRole().getAuthorityNames().stream().map(SimpleGrantedAuthority::new).toList()
                 )
             )
-            .orElseThrow(() -> new ResourceNotFoundException(UserCredentials.class, Map.of(UserCredentials_.USERNAME, username))
-            );
+            .orElseThrow(() -> new ResourceNotFoundException(UserCredentials.class, Map.of("username", username)));
     }
 }

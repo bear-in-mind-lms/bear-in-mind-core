@@ -5,13 +5,14 @@ import com.kwezal.bearinmind.core.user.dto.UserListItemDto;
 import com.kwezal.bearinmind.core.user.model.User;
 import java.util.EnumSet;
 import java.util.Optional;
+import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
-public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
+public interface UserRepository extends JpaRepository<@NonNull User, @NonNull Long>, JpaSpecificationExecutor<@NonNull User> {
     Optional<User> findByUserCredentialsUsernameAndUserCredentialsActiveTrue(String username);
 
     boolean existsByUserCredentialsUsernameOrEmailAndUserCredentialsActiveTrue(String username, String email);
@@ -35,7 +36,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
                     GROUP BY u.id
                     """
     )
-    Page<UserListItemDto> findAllGroupMemberUserListItemByUserId(Long userId, Pageable pageable);
+    Page<@NonNull UserListItemDto> findAllGroupMemberUserListItemByUserId(Long userId, Pageable pageable);
 
     /**
      * Finds a page of users who have given roles in at least one course where a given user has given roles.
@@ -58,7 +59,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
                     GROUP BY u.id
                     """
     )
-    Page<UserListItemDto> findAllUserListItemByUserIdAndCourseRoleIn(
+    Page<@NonNull UserListItemDto> findAllUserListItemByUserIdAndCourseRoleIn(
         Long userId,
         EnumSet<CourseRole> userRoles,
         EnumSet<CourseRole> searchedUserRoles,

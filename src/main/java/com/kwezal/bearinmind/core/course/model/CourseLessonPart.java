@@ -1,6 +1,6 @@
 package com.kwezal.bearinmind.core.course.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

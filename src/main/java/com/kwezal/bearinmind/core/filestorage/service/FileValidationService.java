@@ -45,7 +45,11 @@ class FileValidationService {
      * @param identifier    asset identifier
      * @throws InvalidRequestDataException if validation fails
      */
-    void validateImageDoesNotExceedSizeLimit(MultipartFile multipartFile, FileAssetType fileAssetType, String identifier) {
+    void validateImageDoesNotExceedSizeLimit(
+        final MultipartFile multipartFile,
+        final FileAssetType fileAssetType,
+        final String identifier
+    ) {
         if (IMAGE_ASSET_TYPE_IMAGE_LIMIT_SIZE.get(fileAssetType).getValue() < multipartFile.getSize()) {
             throw new InvalidRequestDataException(
                 MultipartFile.class,
@@ -61,7 +65,7 @@ class FileValidationService {
      * @param multipartFile image file
      * @throws InvalidRequestDataException if validation fails
      */
-    void validateImageHasSupportedExtension(MultipartFile multipartFile) {
+    void validateImageHasSupportedExtension(final MultipartFile multipartFile) {
         final var dot = ".";
         final var extension = dot + StringUtils.substringAfterLast(multipartFile.getOriginalFilename(), dot);
         final var isAllowedExtension = Stream
@@ -80,7 +84,7 @@ class FileValidationService {
      * @param identifier    asset identifier
      * @throws ForbiddenException if validation fails
      */
-    void validateUserHasWritePermissionToFile(long userId, FileAssetType fileAssetType, String identifier) {
+    void validateUserHasWritePermissionToFile(final long userId, final FileAssetType fileAssetType, final String identifier) {
         final var id = getLongIdentifier(identifier);
 
         final var condition =
@@ -103,7 +107,7 @@ class FileValidationService {
         }
     }
 
-    private long getLongIdentifier(String identifier) {
+    private long getLongIdentifier(final String identifier) {
         try {
             return Long.parseLong(identifier);
         } catch (NumberFormatException e) {

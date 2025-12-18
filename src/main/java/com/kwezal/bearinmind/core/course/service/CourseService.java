@@ -22,6 +22,7 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -132,26 +133,26 @@ public class CourseService {
         );
     }
 
-    public Page<CourseListItemDto> findConductedCoursePage(final Integer pageNumber, final Integer pageSize) {
+    public Page<@NonNull CourseListItemDto> findConductedCoursePage(final Integer pageNumber, final Integer pageSize) {
         return findCoursePage(pageNumber, pageSize, courseRepository::findAllConductedCourseListItemByUserId);
     }
 
-    public Page<CourseListItemDto> findActiveCoursePage(final Integer pageNumber, final Integer pageSize) {
+    public Page<@NonNull CourseListItemDto> findActiveCoursePage(final Integer pageNumber, final Integer pageSize) {
         return findCoursePage(pageNumber, pageSize, courseRepository::findAllActiveCourseListItemByUserId);
     }
 
-    public Page<CourseListItemDto> findAvailableCoursePage(final Integer pageNumber, final Integer pageSize) {
+    public Page<@NonNull CourseListItemDto> findAvailableCoursePage(final Integer pageNumber, final Integer pageSize) {
         return findCoursePage(pageNumber, pageSize, courseRepository::findAllAvailableCourseListItemByUserId);
     }
 
-    public Page<CourseListItemDto> findCompletedCoursePage(final Integer pageNumber, final Integer pageSize) {
+    public Page<@NonNull CourseListItemDto> findCompletedCoursePage(final Integer pageNumber, final Integer pageSize) {
         return findCoursePage(pageNumber, pageSize, courseRepository::findAllCompletedCourseListItemByUserId);
     }
 
-    private Page<CourseListItemDto> findCoursePage(
+    private Page<@NonNull CourseListItemDto> findCoursePage(
         final Integer pageNumber,
         final Integer pageSize,
-        final BiFunction<Long, Pageable, Page<CourseListItemView>> findAllCourseListItemByUserId
+        final BiFunction<Long, Pageable, Page<@NonNull CourseListItemView>> findAllCourseListItemByUserId
     ) {
         final var authDetails = loggedInUserService.getAuthenticationDetails();
         final var userId = authDetails.userId();

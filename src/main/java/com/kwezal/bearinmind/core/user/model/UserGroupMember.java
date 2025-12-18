@@ -1,8 +1,8 @@
 package com.kwezal.bearinmind.core.user.model;
 
 import com.kwezal.bearinmind.core.user.enumeration.UserGroupRole;
+import jakarta.persistence.*;
 import java.time.OffsetDateTime;
-import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

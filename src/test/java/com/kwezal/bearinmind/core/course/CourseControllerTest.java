@@ -6,7 +6,7 @@ import static com.kwezal.bearinmind.core.utils.TestConstants.NONEXISTENT_ID;
 import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.kwezal.bearinmind.core.ControllerTestInterface;
+import com.kwezal.bearinmind.core.ControllerTest;
 import com.kwezal.bearinmind.core.course.dto.*;
 import com.kwezal.bearinmind.core.course.enumeration.CourseRole;
 import com.kwezal.bearinmind.core.course.model.Course;
@@ -21,6 +21,8 @@ import com.kwezal.bearinmind.core.utils.Page;
 import com.kwezal.bearinmind.exception.response.ErrorResponse;
 import com.kwezal.bearinmind.translation.model.Translation;
 import com.kwezal.bearinmind.translation.repository.TranslationRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
@@ -29,8 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -42,7 +42,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
@@ -57,7 +56,7 @@ import reactor.core.publisher.Mono;
     executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
 )
 @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)
-class CourseControllerTest implements ControllerTestInterface {
+class CourseControllerTest extends ControllerTest {
 
     private static final String COURSE_NAME_TRANSLATION_KEY = "name";
     private static final String COURSE_DESCRIPTION_TRANSLATION_KEY = "description";
@@ -72,9 +71,6 @@ class CourseControllerTest implements ControllerTestInterface {
 
     @Value("${application.locale}")
     private String applicationLocale;
-
-    @Autowired
-    private WebTestClient webClient;
 
     @Autowired
     private CourseRepository courseRepository;

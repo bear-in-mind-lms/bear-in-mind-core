@@ -1,6 +1,6 @@
 package com.kwezal.bearinmind.core.course.dto;
 
-import com.kwezal.bearinmind.core.validation.annotation.Locale;
+import com.kwezal.bearinmind.translation.validation.annotation.Locale;
 import java.time.OffsetDateTime;
 import java.util.Map;
 

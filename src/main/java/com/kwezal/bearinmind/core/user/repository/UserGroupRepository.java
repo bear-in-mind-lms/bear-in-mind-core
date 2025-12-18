@@ -3,12 +3,13 @@ package com.kwezal.bearinmind.core.user.repository;
 import com.kwezal.bearinmind.core.user.model.UserGroup;
 import com.kwezal.bearinmind.core.user.view.UserGroupListItemView;
 import java.util.List;
+import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
+public interface UserGroupRepository extends JpaRepository<@NonNull UserGroup, @NonNull Long> {
     /**
      * Finds a page of user groups in which a given user is registered.
      * A user is registered in a group if they have the owner or member role.
@@ -27,7 +28,7 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
                     GROUP BY ug.id, ugm.registrationDateTime
                     ORDER BY ugm.registrationDateTime DESC"""
     )
-    Page<UserGroupListItemView> findAllRegisteredUserGroupListItemByUserId(Long userId, Pageable pageable);
+    Page<@NonNull UserGroupListItemView> findAllRegisteredUserGroupListItemByUserId(Long userId, Pageable pageable);
 
     /**
      * Finds a page of available user groups for a given user.
@@ -46,7 +47,7 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
                     GROUP BY ug.id
                     ORDER BY ug.creationDateTime DESC"""
     )
-    Page<UserGroupListItemView> findAllAvailableUserGroupListItemByUserId(Long userId, Pageable pageable);
+    Page<@NonNull UserGroupListItemView> findAllAvailableUserGroupListItemByUserId(Long userId, Pageable pageable);
 
     /**
      * Finds a user group and its members for a given group.

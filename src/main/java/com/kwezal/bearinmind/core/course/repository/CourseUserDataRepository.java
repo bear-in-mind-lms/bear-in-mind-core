@@ -6,12 +6,11 @@ import com.kwezal.bearinmind.core.user.dto.UserListItemDto;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface CourseUserDataRepository extends JpaRepository<CourseUserData, Long> {
+public interface CourseUserDataRepository extends JpaRepository<@NonNull CourseUserData, @NonNull Long> {
     boolean existsByCourseIdAndUserId(Long courseId, Long userId);
 
     boolean existsByUserIdAndRole(Long userId, CourseRole role);

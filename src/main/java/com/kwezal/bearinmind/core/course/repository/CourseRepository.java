@@ -4,14 +4,13 @@ import com.kwezal.bearinmind.core.course.model.Course;
 import com.kwezal.bearinmind.core.course.view.CourseListItemView;
 import com.kwezal.bearinmind.core.course.view.UserCourseView;
 import java.util.List;
+import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface CourseRepository extends JpaRepository<Course, Long> {
+public interface CourseRepository extends JpaRepository<@NonNull Course, @NonNull Long> {
     /**
      * Finds a page of conducted courses for a given user.
      * A conducted course is one that has not ended and that user has the owner or teacher role in.
